@@ -1,0 +1,24 @@
+## Build artifacts
+bin/
+obj/
+
+## User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Publishing
+publish/
+*.pubxml
