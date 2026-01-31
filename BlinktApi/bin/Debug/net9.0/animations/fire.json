@@ -1,0 +1,13 @@
+{
+  "name": "fire",
+  "description": "🔥 Flickering fire effect",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "fire_flicker",
+  "parameters": {
+    "fps": 60,
+    "base_brightness": 0.03,
+    "flicker_amount": 0.05,
+    "color_variation": 0.2
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "fast",
+  "description": "💨 Rapid scanner",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "bouncing_dot",
+  "parameters": {
+    "fps": 60,
+    "trail_length": 2,
+    "brightness": [0.08, 0.04, 0.02]
+  }
+}

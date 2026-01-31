@@ -25,38 +25,71 @@ public class AnimationPlayer : BackgroundService
         if (Directory.Exists(animationsPath))
         {
             _controller.LoadAnimations(animationsPath);
+            _logger.LogInformation("Loaded {Count} animations", _controller.GetAnimationNames().Count());
         }
 
         // Test the hardware
         _logger.LogInformation("Testing Blinkt hardware...");
-        TestBlinkt();
+        await TestBlinkt();
 
         // Main animation loop
+        var frameTime = TimeSpan.FromMilliseconds(20); // ~50 FPS
+        
         while (!stoppingToken.IsCancellationRequested)
         {
-            // TODO: Implement animation rendering loop
-            // For now, just idle
-            await Task.Delay(100, stoppingToken);
+            var frameStart = DateTime.UtcNow;
+            
+            // Check for expired animations
+            _controller.CheckExpiration();
+            
+            // Render current animation
+            var (state, renderer) = _controller.GetCurrent();
+            if (state != null && renderer != null)
+            {
+                var elapsed = (DateTime.UtcNow - state.StartTime).TotalSeconds;
+                try
+                {
+                    renderer.Render(_blinkt, state.Color, elapsed);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Animation rendering error");
+                }
+            }
+            else
+            {
+                // No animation - clear LEDs
+                _blinkt.Clear();
+                _blinkt.Show();
+            }
+            
+            // Frame timing
+            var frameElapsed = DateTime.UtcNow - frameStart;
+            var delay = frameTime - frameElapsed;
+            if (delay > TimeSpan.Zero)
+            {
+                await Task.Delay(delay, stoppingToken);
+            }
         }
         
         _logger.LogInformation("Animation player stopped");
     }
 
-    private void TestBlinkt()
+    private async Task TestBlinkt()
     {
         try
         {
             // Quick test: Flash all LEDs green
             _blinkt.SetAll(0, 255, 0, 0.1);
             _blinkt.Show();
-            Thread.Sleep(500);
+            await Task.Delay(500);
             _blinkt.Clear();
             _blinkt.Show();
             _logger.LogInformation("Blinkt hardware test complete");
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Blinkt hardware test failed");
+            _logger.LogWarning(ex, "Blinkt hardware test failed - running in test mode");
         }
     }
 

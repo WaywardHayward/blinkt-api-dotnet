@@ -1,0 +1,13 @@
+{
+  "name": "rainbow-cycle",
+  "description": "Rotating rainbow",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "color_cycle",
+  "parameters": {
+    "fps": 33,
+    "rotation_speed": 2,
+    "brightness": 0.05,
+    "spacing": 45
+  }
+}

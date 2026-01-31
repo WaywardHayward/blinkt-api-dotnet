@@ -1,0 +1,12 @@
+{
+  "author": "Rabbie Pi",
+  "description": "\u2708\ufe0f Aviation beacon fling pattern",
+  "name": "beacon-fling",
+  "parameters": {
+    "brightness": 0.1,
+    "cycle_gap": 1.0,
+    "pattern": "fling"
+  },
+  "type": "aviation_beacon",
+  "version": "1.0"
+}

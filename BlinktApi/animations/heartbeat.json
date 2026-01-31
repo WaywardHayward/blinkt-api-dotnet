@@ -1,0 +1,13 @@
+{
+  "name": "heartbeat",
+  "description": "❤️ Heart beating pulse from center",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "center_pulse",
+  "parameters": {
+    "fps": 30,
+    "pulse_speed": 0.8,
+    "max_brightness": 0.08,
+    "beat_interval": 1.5
+  }
+}

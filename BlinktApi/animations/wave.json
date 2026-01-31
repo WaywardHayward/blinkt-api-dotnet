@@ -1,0 +1,13 @@
+{
+  "name": "wave",
+  "description": "Wave moving across LEDs",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "traveling_wave",
+  "parameters": {
+    "fps": 33,
+    "speed": 0.2,
+    "width": 5,
+    "max_brightness": 0.08
+  }
+}

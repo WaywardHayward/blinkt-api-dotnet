@@ -1,0 +1,12 @@
+{
+  "author": "Rabbie Pi",
+  "description": "\u2708\ufe0f Aviation beacon code4 pattern",
+  "name": "beacon-code4",
+  "parameters": {
+    "brightness": 0.1,
+    "cycle_gap": 1.0,
+    "pattern": "code4"
+  },
+  "type": "aviation_beacon",
+  "version": "1.0"
+}

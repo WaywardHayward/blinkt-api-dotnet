@@ -1,0 +1,12 @@
+{
+  "name": "fill",
+  "description": "Fill and empty LEDs in sequence",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "sequential_fill",
+  "parameters": {
+    "fps": 10,
+    "brightness": 0.05,
+    "direction": "both"
+  }
+}

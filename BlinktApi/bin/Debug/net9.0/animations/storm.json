@@ -1,0 +1,11 @@
+{
+  "name": "storm",
+  "description": "Intense stormy flashes",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "random_single",
+  "parameters": {
+    "fps": 20,
+    "brightness": 0.08
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "sunshine",
+  "description": "Warm sunshine shimmer",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "pixel_oscillator",
+  "parameters": {
+    "fps": 40,
+    "brightness_range": [0.02, 0.08],
+    "speed_range": [0.03, 0.1],
+    "oscillator": "sine"
+  }
+}

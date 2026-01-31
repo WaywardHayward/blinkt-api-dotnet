@@ -1,0 +1,11 @@
+{
+  "name": "sparkle",
+  "description": "Single random pixel at a time",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "random_single",
+  "parameters": {
+    "fps": 10,
+    "brightness": 0.08
+  }
+}

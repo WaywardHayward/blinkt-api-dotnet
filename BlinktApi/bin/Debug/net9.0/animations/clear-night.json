@@ -1,0 +1,13 @@
+{
+  "name": "clear-night",
+  "description": "Deep night sky pulse",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "global_oscillator",
+  "parameters": {
+    "fps": 30,
+    "period_seconds": 8,
+    "brightness_range": [0.01, 0.04],
+    "oscillator": "sine"
+  }
+}

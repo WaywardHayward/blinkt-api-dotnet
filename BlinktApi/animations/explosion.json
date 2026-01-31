@@ -1,0 +1,13 @@
+{
+  "name": "explosion",
+  "description": "💥 Center burst expanding outward",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "burst_outward",
+  "parameters": {
+    "fps": 30,
+    "burst_speed": 0.5,
+    "fade_speed": 0.05,
+    "max_brightness": 0.1
+  }
+}
