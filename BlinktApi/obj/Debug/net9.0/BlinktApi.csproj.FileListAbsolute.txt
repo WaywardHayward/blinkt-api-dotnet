@@ -25,3 +25,7 @@
 /home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/BlinktApi.pdb
 /home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/BlinktApi.genruntimeconfig.cache
 /home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/ref/BlinktApi.dll
+/home/pi/dev/blinkt-api-dotnet/BlinktApi/bin/Debug/net9.0/System.Device.Gpio.dll
+/home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/BlinktApi.csproj.AssemblyReference.cache
+/home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/BlinktApi.sourcelink.json
+/home/pi/dev/blinkt-api-dotnet/BlinktApi/obj/Debug/net9.0/BlinktApi.csproj.Up2Date

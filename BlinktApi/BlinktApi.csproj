@@ -14,5 +14,8 @@
     <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Device.Gpio" Version="3.2.0" />
+  </ItemGroup>
 
 </Project>

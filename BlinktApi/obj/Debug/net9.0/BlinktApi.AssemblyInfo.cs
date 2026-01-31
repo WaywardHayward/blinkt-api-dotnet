@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlinktApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b917f8f3124fe6c15b38ce38d0781a0240f89561")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlinktApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlinktApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
