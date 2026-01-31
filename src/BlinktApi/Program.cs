@@ -21,12 +21,12 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Enable Swagger UI
+// Enable Swagger UI at /swagger
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Blinkt API v1");
-    options.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    options.RoutePrefix = "swagger"; // Serve Swagger UI at /swagger
 });
 
 app.MapControllers();
