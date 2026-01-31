@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "k205OG7ySFA=",
+  "dgSpecHash": "QpdkaRjQfrI=",
   "success": true,
   "projectFilePath": "/home/pi/dev/blinkt-api-dotnet/BlinktApi/BlinktApi.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/pi/.nuget/packages/microsoft.net.illink.tasks/9.0.12/microsoft.net.illink.tasks.9.0.12.nupkg.sha512",
+    "/home/pi/.nuget/packages/microsoft.netcore.app.runtime.linux-arm64/9.0.12/microsoft.netcore.app.runtime.linux-arm64.9.0.12.nupkg.sha512",
+    "/home/pi/.nuget/packages/microsoft.aspnetcore.app.runtime.linux-arm64/9.0.12/microsoft.aspnetcore.app.runtime.linux-arm64.9.0.12.nupkg.sha512"
+  ],
   "logs": []
 }
