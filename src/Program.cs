@@ -13,6 +13,7 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 builder.Services.AddControllers();
 builder.Services.AddSingleton<AnimationController>();
 builder.Services.AddHostedService<AnimationPlayer>();
+builder.Services.AddHostedService<AnimationHotReloadService>();
 
 // Add Swagger
 builder.Services.AddEndpointsApiExplorer();

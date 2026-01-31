@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Drawing;
 using System.Text.Json;
 using BlinktApi.Models;
 using BlinktApi.Rendering;
@@ -10,6 +11,7 @@ public class AnimationController
 {
     private readonly ConcurrentDictionary<string, Animation> _animations = new();
     private readonly Stack<AnimationState> _stack = new();
+    private readonly Queue<QueuedAnimation> _queue = new();
     private AnimationState? _currentState;
     private IAnimationRenderer? _currentRenderer;
     private readonly object _lock = new();
@@ -64,7 +66,7 @@ public class AnimationController
     public Animation? GetAnimation(string name) =>
         _animations.TryGetValue(name, out var animation) ? animation : null;
 
-    public void StartAnimation(string name, string colorName, int durationSeconds)
+    public void StartAnimation(string name, Color color, int durationSeconds)
     {
         lock (_lock)
         {
@@ -73,13 +75,6 @@ public class AnimationController
             {
                 _logger.LogWarning("Attempt to start unknown animation: {Name}", name);
                 throw new KeyNotFoundException($"Animation '{name}' not found");
-            }
-
-            var color = ColorHelper.Parse(colorName);
-            if (color == System.Drawing.Color.Empty)
-            {
-                _logger.LogWarning("Invalid color specified: {Color}", colorName);
-                throw new ArgumentException($"Invalid color: {colorName}", nameof(colorName));
             }
 
             var renderer = RendererFactory.CreateRenderer(animation);
@@ -109,7 +104,7 @@ public class AnimationController
             _logger.LogInformation(
                 "Started animation: {Name}, Color: {Color}, Duration: {Duration}s", 
                 name, 
-                colorName, 
+                $"#{color.R:X2}{color.G:X2}{color.B:X2}", 
                 durationSeconds > 0 ? durationSeconds.ToString() : "infinite");
         }
     }
@@ -146,8 +141,57 @@ public class AnimationController
             if (_currentState?.IsExpired == true)
             {
                 _logger.LogDebug("Animation {Name} expired after {Duration}s", _currentState.Name, _currentState.DurationSeconds);
-                StopAnimation();
+                
+                // Check if there's a queued animation
+                if (_queue.Count > 0)
+                {
+                    var next = _queue.Dequeue();
+                    _logger.LogInformation("Playing next queued animation: {Name} ({QueueRemaining} remaining)", next.Name, _queue.Count);
+                    StartAnimation(next.Name, next.Color, next.DurationSeconds);
+                }
+                else
+                {
+                    StopAnimation();
+                }
             }
+        }
+    }
+    
+    public void EnqueueAnimations(IEnumerable<QueuedAnimation> animations)
+    {
+        lock (_lock)
+        {
+            foreach (var anim in animations)
+            {
+                _queue.Enqueue(anim);
+            }
+            _logger.LogInformation("Enqueued {Count} animations (total queue: {Total})", animations.Count(), _queue.Count);
+            
+            // If nothing is playing, start the first one
+            if (_currentState == null && _queue.Count > 0)
+            {
+                var first = _queue.Dequeue();
+                _logger.LogInformation("Starting first queued animation: {Name}", first.Name);
+                StartAnimation(first.Name, first.Color, first.DurationSeconds);
+            }
+        }
+    }
+    
+    public void ClearQueue()
+    {
+        lock (_lock)
+        {
+            var count = _queue.Count;
+            _queue.Clear();
+            _logger.LogInformation("Cleared animation queue ({Count} items removed)", count);
+        }
+    }
+    
+    public int GetQueueLength()
+    {
+        lock (_lock)
+        {
+            return _queue.Count;
         }
     }
 
@@ -166,6 +210,8 @@ public class AnimationController
         is_running = _currentState != null,
         animation_count = _animations.Count,
         stack_depth = _stack.Count,
-        stack = _stack.Select(s => $"{s.Name} ({s.Color.Name})").ToArray()
+        queue_length = _queue.Count,
+        stack = _stack.Select(s => $"{s.Name} ({s.Color.Name})").ToArray(),
+        queue = _queue.Select(q => $"{q.Name} ({q.DurationSeconds}s)").ToArray()
     };
 }

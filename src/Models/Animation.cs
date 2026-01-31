@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BlinktApi.Models;
 
@@ -16,8 +17,21 @@ public record Animation
 public record AnimationRequest
 {
     public required string Name { get; init; }
-    public string Color { get; init; } = "blue";
+    
+    [JsonPropertyName("color")]
+    public string? ColorString { get; init; }
+    
+    [JsonPropertyName("rgb")]
+    public RgbColor? Rgb { get; init; }
+    
     public int Duration { get; init; } = 0; // 0 = infinite
+}
+
+public record RgbColor
+{
+    public byte R { get; init; }
+    public byte G { get; init; }
+    public byte B { get; init; }
 }
 
 public record AnimationState
@@ -47,10 +61,31 @@ public static class ColorHelper
         ["white"] = Color.FromArgb(255, 255, 255),
     };
 
-    public static Color Parse(string colorName)
+    public static Color Parse(string colorInput)
     {
-        return NamedColors.TryGetValue(colorName.ToLower(), out var color)
-            ? color
-            : Color.FromArgb(0, 0, 255); // Default to blue
+        var input = colorInput.Trim();
+        
+        // Try hex format: #RRGGBB or RRGGBB
+        if (input.StartsWith('#'))
+            input = input[1..];
+            
+        if (input.Length == 6 && int.TryParse(input, System.Globalization.NumberStyles.HexNumber, null, out var hexValue))
+        {
+            var r = (byte)((hexValue >> 16) & 0xFF);
+            var g = (byte)((hexValue >> 8) & 0xFF);
+            var b = (byte)(hexValue & 0xFF);
+            return Color.FromArgb(r, g, b);
+        }
+        
+        // Try named color
+        if (NamedColors.TryGetValue(input.ToLower(), out var color))
+            return color;
+        
+        throw new ArgumentException($"Invalid color: '{colorInput}'. Use a named color (red, blue, etc.) or hex format (#FF0000)");
+    }
+    
+    public static Color FromRgb(byte r, byte g, byte b)
+    {
+        return Color.FromArgb(r, g, b);
     }
 }
