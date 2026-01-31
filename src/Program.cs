@@ -1,6 +1,13 @@
 using BlinktApi.Services;
+using BlinktApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 // Add services
 builder.Services.AddControllers();
@@ -21,6 +28,10 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// Configure middleware pipeline
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 // Enable Swagger UI at /swagger
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -30,5 +41,8 @@ app.UseSwaggerUI(options =>
 });
 
 app.MapControllers();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Blinkt API starting on http://0.0.0.0:5001");
 
 app.Run("http://0.0.0.0:5001");

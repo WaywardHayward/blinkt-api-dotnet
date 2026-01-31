@@ -9,11 +9,11 @@ public class AnimationPlayer : BackgroundService
     private readonly ILogger<AnimationPlayer> _logger;
     private readonly BlinktController _blinkt;
 
-    public AnimationPlayer(AnimationController controller, ILogger<AnimationPlayer> logger)
+    public AnimationPlayer(AnimationController controller, ILogger<AnimationPlayer> logger, ILoggerFactory loggerFactory)
     {
         _controller = controller;
         _logger = logger;
-        _blinkt = new BlinktController();
+        _blinkt = new BlinktController(loggerFactory.CreateLogger<BlinktController>());
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

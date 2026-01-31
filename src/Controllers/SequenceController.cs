@@ -10,10 +10,12 @@ namespace BlinktApi.Controllers;
 public class SequenceController : ControllerBase
 {
     private readonly AnimationController _controller;
+    private readonly ILogger<SequenceController> _logger;
 
-    public SequenceController(AnimationController controller)
+    public SequenceController(AnimationController controller, ILogger<SequenceController> logger)
     {
         _controller = controller;
+        _logger = logger;
     }
 
     /// <summary>
@@ -23,8 +25,13 @@ public class SequenceController : ControllerBase
     /// <returns>Animation started confirmation</returns>
     [HttpPost]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public IActionResult Post([FromBody] AnimationRequest request)
     {
+        _logger.LogInformation("Starting animation: {Name}, Color: {Color}, Duration: {Duration}s", 
+            request.Name, request.Color, request.Duration);
+        
         _controller.StartAnimation(request.Name, request.Color, request.Duration);
         
         return Ok(new

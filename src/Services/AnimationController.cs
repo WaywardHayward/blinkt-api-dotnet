@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using BlinktApi.Models;
 using BlinktApi.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace BlinktApi.Services;
 
@@ -12,13 +13,26 @@ public class AnimationController
     private AnimationState? _currentState;
     private IAnimationRenderer? _currentRenderer;
     private readonly object _lock = new();
+    private readonly ILogger<AnimationController> _logger;
+
+    public AnimationController(ILogger<AnimationController> logger)
+    {
+        _logger = logger;
+    }
 
     public void LoadAnimations(string animationsPath)
     {
         if (!Directory.Exists(animationsPath))
+        {
+            _logger.LogWarning("Animations directory not found: {Path}", animationsPath);
             return;
+        }
 
-        foreach (var file in Directory.GetFiles(animationsPath, "*.json"))
+        var files = Directory.GetFiles(animationsPath, "*.json");
+        _logger.LogInformation("Loading animations from {Path} ({Count} files)", animationsPath, files.Length);
+
+        var loadedCount = 0;
+        foreach (var file in files)
         {
             try
             {
@@ -28,13 +42,21 @@ public class AnimationController
                 if (animation?.Name != null)
                 {
                     _animations[animation.Name] = animation;
+                    loadedCount++;
+                    _logger.LogDebug("Loaded animation: {Name} from {File}", animation.Name, Path.GetFileName(file));
+                }
+                else
+                {
+                    _logger.LogWarning("Animation file {File} has no name property", Path.GetFileName(file));
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to load animation {file}: {ex.Message}");
+                _logger.LogError(ex, "Failed to load animation from {File}", Path.GetFileName(file));
             }
         }
+        
+        _logger.LogInformation("Successfully loaded {LoadedCount}/{TotalCount} animations", loadedCount, files.Length);
     }
 
     public IEnumerable<string> GetAnimationNames() => _animations.Keys.OrderBy(k => k);
@@ -48,18 +70,31 @@ public class AnimationController
         {
             var animation = GetAnimation(name);
             if (animation == null)
-                return;
+            {
+                _logger.LogWarning("Attempt to start unknown animation: {Name}", name);
+                throw new KeyNotFoundException($"Animation '{name}' not found");
+            }
 
             var color = ColorHelper.Parse(colorName);
+            if (color == System.Drawing.Color.Empty)
+            {
+                _logger.LogWarning("Invalid color specified: {Color}", colorName);
+                throw new ArgumentException($"Invalid color: {colorName}", nameof(colorName));
+            }
+
             var renderer = RendererFactory.CreateRenderer(animation);
             
             if (renderer == null)
-                return;
+            {
+                _logger.LogError("Failed to create renderer for animation: {Name}", name);
+                throw new InvalidOperationException($"Could not create renderer for animation '{name}'");
+            }
 
             // If there's a current animation with finite duration, push to stack
             if (_currentState != null && _currentState.DurationSeconds > 0)
             {
                 _stack.Push(_currentState);
+                _logger.LogDebug("Pushed animation {Name} to stack (depth: {Depth})", _currentState.Name, _stack.Count);
             }
 
             _currentState = new AnimationState
@@ -70,6 +105,12 @@ public class AnimationController
                 DurationSeconds = durationSeconds
             };
             _currentRenderer = renderer;
+            
+            _logger.LogInformation(
+                "Started animation: {Name}, Color: {Color}, Duration: {Duration}s", 
+                name, 
+                colorName, 
+                durationSeconds > 0 ? durationSeconds.ToString() : "infinite");
         }
     }
 
@@ -86,10 +127,12 @@ public class AnimationController
                 {
                     _currentState = previous;
                     _currentRenderer = RendererFactory.CreateRenderer(animation);
+                    _logger.LogInformation("Popped back to animation: {Name} (stack depth: {Depth})", previous.Name, _stack.Count);
                 }
             }
             else
             {
+                _logger.LogInformation("Stopped animation: {Name}", _currentState?.Name ?? "(none)");
                 _currentState = null;
                 _currentRenderer = null;
             }
@@ -102,6 +145,7 @@ public class AnimationController
         {
             if (_currentState?.IsExpired == true)
             {
+                _logger.LogDebug("Animation {Name} expired after {Duration}s", _currentState.Name, _currentState.DurationSeconds);
                 StopAnimation();
             }
         }
