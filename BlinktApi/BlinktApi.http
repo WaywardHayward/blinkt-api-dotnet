@@ -1,0 +1,6 @@
+@BlinktApi_HostAddress = http://localhost:5161
+
+GET {{BlinktApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
