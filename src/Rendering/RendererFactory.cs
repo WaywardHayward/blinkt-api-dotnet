@@ -19,6 +19,7 @@ public static class RendererFactory
             "fill" => CreateFill(animation.Parameters.Value),
             "sparkle" => CreateSparkle(animation.Parameters.Value),
             "rainbow_cycle" => CreateRainbowCycle(animation.Parameters.Value),
+            "center_pulse" => CreateCenterPulse(animation.Parameters.Value),
             _ => null
         };
     }
@@ -86,5 +87,14 @@ public static class RendererFactory
         var brightness = json.GetProperty("brightness").GetDouble();
 
         return new RainbowCycleRenderer(speed, brightness);
+    }
+
+    private static CenterPulseRenderer CreateCenterPulse(JsonElement json)
+    {
+        var pulseSpeed = json.GetProperty("pulse_speed").GetDouble();
+        var maxBrightness = json.GetProperty("max_brightness").GetDouble();
+        var beatInterval = json.GetProperty("beat_interval").GetDouble();
+
+        return new CenterPulseRenderer(pulseSpeed, maxBrightness, beatInterval);
     }
 }

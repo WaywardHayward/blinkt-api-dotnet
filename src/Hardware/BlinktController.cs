@@ -95,23 +95,18 @@ public class BlinktController : IDisposable
         {
             _logger?.LogDebug("Writing {PixelCount} pixels via GPIO bit-banging", PixelCount);
             
-            // Start frame (32 bits of 0)
-            WriteByte(0x00);
-            WriteByte(0x00);
-            WriteByte(0x00);
-            WriteByte(0x00);
+            // Start of Frame (SOF): 32 clock pulses with DAT low
+            WriteStartFrame();
             
-            // Pixel data (4 bytes per pixel)
+            // Pixel data (4 bytes per pixel: brightness, blue, green, red)
             for (int i = 0; i < _pixels.Length; i++)
             {
                 WriteByte(_pixels[i]);
             }
             
-            // End frame (32 bits of 1)
-            WriteByte(0xFF);
-            WriteByte(0xFF);
-            WriteByte(0xFF);
-            WriteByte(0xFF);
+            // End of Frame (EOF): 36 clock pulses with DAT low
+            // (Blinkt uses specific APA102 chips that need 36 clocks to latch)
+            WriteEndFrame();
             
             _logger?.LogDebug("GPIO write completed successfully");
         }
@@ -122,10 +117,32 @@ public class BlinktController : IDisposable
         }
     }
 
+    private void WriteStartFrame()
+    {
+        // SOF: 32 clock pulses with DAT=0
+        _gpio!.Write(DAT, PinValue.Low);
+        for (int i = 0; i < 32; i++)
+        {
+            _gpio.Write(CLK, PinValue.High);
+            _gpio.Write(CLK, PinValue.Low);
+        }
+    }
+
+    private void WriteEndFrame()
+    {
+        // EOF: 36 clock pulses with DAT=0
+        // Blinkt's specific APA102 chips need 36 clocks (not the standard 4)
+        _gpio!.Write(DAT, PinValue.Low);
+        for (int i = 0; i < 36; i++)
+        {
+            _gpio.Write(CLK, PinValue.High);
+            _gpio.Write(CLK, PinValue.Low);
+        }
+    }
+
     private void WriteByte(byte value)
     {
         // Bit-bang the byte MSB first
-        // Minimal delay - just enough for APA102 to register the bit
         for (int i = 7; i >= 0; i--)
         {
             var bit = (value & (1 << i)) != 0;

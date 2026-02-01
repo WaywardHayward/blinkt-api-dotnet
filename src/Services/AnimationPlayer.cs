@@ -33,7 +33,7 @@ public class AnimationPlayer : BackgroundService
         await TestBlinkt();
 
         // Main animation loop
-        var frameTime = TimeSpan.FromMilliseconds(20); // ~50 FPS
+        var frameTime = TimeSpan.FromMilliseconds(16); // ~60 FPS
         
         while (!stoppingToken.IsCancellationRequested)
         {
