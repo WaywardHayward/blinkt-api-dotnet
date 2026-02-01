@@ -20,6 +20,9 @@ public static class RendererFactory
             "sparkle" => CreateSparkle(animation.Parameters.Value),
             "rainbow_cycle" => CreateRainbowCycle(animation.Parameters.Value),
             "center_pulse" => CreateCenterPulse(animation.Parameters.Value),
+            "burst_outward" => CreateBurstOutward(animation.Parameters.Value),
+            "random_single" => CreateRandomSingle(animation.Parameters.Value),
+            "color_cycle" => CreateColorCycle(animation.Parameters.Value),
             _ => null
         };
     }
@@ -96,5 +99,30 @@ public static class RendererFactory
         var beatInterval = json.GetProperty("beat_interval").GetDouble();
 
         return new CenterPulseRenderer(pulseSpeed, maxBrightness, beatInterval);
+    }
+
+    private static BurstOutwardRenderer CreateBurstOutward(JsonElement json)
+    {
+        var burstSpeed = json.GetProperty("burst_speed").GetDouble();
+        var fadeSpeed = json.GetProperty("fade_speed").GetDouble();
+        var maxBrightness = json.GetProperty("max_brightness").GetDouble();
+
+        return new BurstOutwardRenderer(burstSpeed, fadeSpeed, maxBrightness);
+    }
+
+    private static RandomSingleRenderer CreateRandomSingle(JsonElement json)
+    {
+        var brightness = json.GetProperty("brightness").GetDouble();
+
+        return new RandomSingleRenderer(brightness);
+    }
+
+    private static ColorCycleRenderer CreateColorCycle(JsonElement json)
+    {
+        var rotationSpeed = json.GetProperty("rotation_speed").GetDouble();
+        var brightness = json.GetProperty("brightness").GetDouble();
+        var spacing = json.GetProperty("spacing").GetDouble();
+
+        return new ColorCycleRenderer(rotationSpeed, brightness, spacing);
     }
 }
