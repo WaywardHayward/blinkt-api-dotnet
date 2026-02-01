@@ -1,22 +1,24 @@
 using System.Device.Gpio;
-using System.Device.Spi;
 using Microsoft.Extensions.Logging;
 
 namespace BlinktApi.Hardware;
 
 /// <summary>
 /// Pimoroni Blinkt LED strip controller (8 RGB LEDs)
-/// Uses APA102 protocol over SPI
+/// Uses APA102 protocol over GPIO bit-banging (GPIO 23 = DAT, GPIO 24 = CLK)
 /// </summary>
 public class BlinktController : IDisposable
 {
     private const int PixelCount = 8;
-    private readonly SpiDevice? _spiDevice;
-    private readonly byte[] _pixels = new byte[PixelCount * 4]; // BGRA for each pixel
+    private const int DAT = 23; // GPIO 23 (Physical pin 16)
+    private const int CLK = 24; // GPIO 24 (Physical pin 18)
+    
+    private readonly GpioController? _gpio;
+    private readonly byte[] _pixels = new byte[PixelCount * 4]; // Brightness + BGR for each pixel
     private readonly ILogger<BlinktController>? _logger;
     private bool _disposed;
     
-    public bool IsHardwareAvailable => _spiDevice != null;
+    public bool IsHardwareAvailable => _gpio != null;
 
     public BlinktController(ILogger<BlinktController>? logger = null)
     {
@@ -24,17 +26,18 @@ public class BlinktController : IDisposable
         
         try
         {
-            var settings = new SpiConnectionSettings(0, 0)
-            {
-                ClockFrequency = 8_000_000, // 8 MHz
-                Mode = SpiMode.Mode0
-            };
-            _spiDevice = SpiDevice.Create(settings);
-            _logger?.LogInformation("Blinkt hardware initialized successfully on SPI 0.0");
+            _gpio = new GpioController();
+            _gpio.OpenPin(DAT, PinMode.Output);
+            _gpio.OpenPin(CLK, PinMode.Output);
+            _gpio.Write(DAT, PinValue.Low);
+            _gpio.Write(CLK, PinValue.Low);
+            _logger?.LogInformation("Blinkt hardware initialized successfully on GPIO {DAT}/{CLK}", DAT, CLK);
         }
         catch (Exception ex)
         {
-            _logger?.LogWarning(ex, "Could not initialize SPI device. Running in test mode (no hardware)");
+            _logger?.LogWarning(ex, "Could not initialize GPIO. Running in test mode (no hardware)");
+            _gpio?.Dispose();
+            _gpio = null;
         }
     }
 
@@ -57,6 +60,9 @@ public class BlinktController : IDisposable
         _pixels[offset + 1] = blue;
         _pixels[offset + 2] = green;
         _pixels[offset + 3] = red;
+        
+        _logger?.LogDebug("SetPixel({Index}): R={Red} G={Green} B={Blue} Brightness={Brightness:F2}", 
+            index, red, green, blue, brightness);
     }
 
     public void SetAll(byte red, byte green, byte blue, double brightness = 1.0)
@@ -69,40 +75,63 @@ public class BlinktController : IDisposable
 
     public void Clear()
     {
-        Array.Clear(_pixels);
+        // APA102 requires brightness byte to be 0b111xxxxx format
+        // Setting all to 0 isn't enough - need proper brightness byte with 0 RGB
+        for (int i = 0; i < PixelCount; i++)
+        {
+            SetPixel(i, 0, 0, 0, 0.0);
+        }
     }
 
     public void Show()
     {
-        if (_spiDevice == null)
+        if (_gpio == null)
         {
-            _logger?.LogDebug("Show() called in test mode - no hardware available");
+            _logger?.LogWarning("Show() called but GPIO is null - running in test mode");
             return; // Test mode - no hardware
         }
 
         try
         {
-            // APA102 protocol: Start frame, pixel data, end frame
-            var buffer = new byte[4 + _pixels.Length + 4];
+            _logger?.LogDebug("Writing {PixelCount} pixels via GPIO bit-banging", PixelCount);
             
             // Start frame (32 bits of 0)
-            // buffer[0..3] already 0 from initialization
+            WriteByte(0x00);
+            WriteByte(0x00);
+            WriteByte(0x00);
+            WriteByte(0x00);
             
-            // Pixel data
-            _pixels.CopyTo(buffer, 4);
+            // Pixel data (4 bytes per pixel)
+            for (int i = 0; i < _pixels.Length; i++)
+            {
+                WriteByte(_pixels[i]);
+            }
             
-            // End frame (32 bits of 1) - actually just need clock pulses
-            buffer[^4] = 0xFF;
-            buffer[^3] = 0xFF;
-            buffer[^2] = 0xFF;
-            buffer[^1] = 0xFF;
+            // End frame (32 bits of 1)
+            WriteByte(0xFF);
+            WriteByte(0xFF);
+            WriteByte(0xFF);
+            WriteByte(0xFF);
             
-            _spiDevice.Write(buffer);
+            _logger?.LogDebug("GPIO write completed successfully");
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Failed to write to SPI device");
+            _logger?.LogError(ex, "Failed to write to GPIO");
             throw new InvalidOperationException("Failed to update LED strip", ex);
+        }
+    }
+
+    private void WriteByte(byte value)
+    {
+        // Bit-bang the byte MSB first
+        // Minimal delay - just enough for APA102 to register the bit
+        for (int i = 7; i >= 0; i--)
+        {
+            var bit = (value & (1 << i)) != 0;
+            _gpio!.Write(DAT, bit ? PinValue.High : PinValue.Low);
+            _gpio.Write(CLK, PinValue.High);
+            _gpio.Write(CLK, PinValue.Low);
         }
     }
 
@@ -114,7 +143,16 @@ public class BlinktController : IDisposable
         {
             Clear();
             Show();
-            _spiDevice?.Dispose();
+            
+            if (_gpio != null)
+            {
+                _gpio.Write(DAT, PinValue.Low);
+                _gpio.Write(CLK, PinValue.Low);
+                _gpio.ClosePin(DAT);
+                _gpio.ClosePin(CLK);
+                _gpio.Dispose();
+            }
+            
             _logger?.LogInformation("Blinkt hardware disposed successfully");
         }
         catch (Exception ex)

@@ -39,7 +39,8 @@ public class AnimationController
             try
             {
                 var json = File.ReadAllText(file);
-                var animation = JsonSerializer.Deserialize<Animation>(json);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var animation = JsonSerializer.Deserialize<Animation>(json, options);
                 
                 if (animation?.Name != null)
                 {
