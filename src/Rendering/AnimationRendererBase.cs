@@ -28,4 +28,48 @@ public abstract class AnimationRendererBase : IAnimationRenderer
         renderAction(controller);
         controller.Show();
     }
+
+    /// <summary>
+    /// Set the same color/brightness on multiple pixels
+    /// </summary>
+    protected void SetPixels(BlinktController controller, Color color, double brightness, params int[] pixels)
+    {
+        foreach (var pixel in pixels)
+        {
+            controller.SetPixel(pixel, color.R, color.G, color.B, brightness);
+        }
+    }
+
+    /// <summary>
+    /// Set the same RGB/brightness on multiple pixels
+    /// </summary>
+    protected void SetPixels(BlinktController controller, byte r, byte g, byte b, double brightness, params int[] pixels)
+    {
+        foreach (var pixel in pixels)
+        {
+            controller.SetPixel(pixel, r, g, b, brightness);
+        }
+    }
+
+    /// <summary>
+    /// Set a range of pixels to the same color/brightness
+    /// </summary>
+    protected void SetPixelRange(BlinktController controller, Color color, double brightness, int start, int count)
+    {
+        for (int i = start; i < start + count && i < PixelCount; i++)
+        {
+            controller.SetPixel(i, color.R, color.G, color.B, brightness);
+        }
+    }
+
+    /// <summary>
+    /// Set all pixels to the same color/brightness
+    /// </summary>
+    protected void SetAllPixels(BlinktController controller, Color color, double brightness)
+    {
+        for (int i = 0; i < PixelCount; i++)
+        {
+            controller.SetPixel(i, color.R, color.G, color.B, brightness);
+        }
+    }
 }

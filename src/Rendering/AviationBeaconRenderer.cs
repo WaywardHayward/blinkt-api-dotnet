@@ -25,101 +25,99 @@ public class AviationBeaconRenderer : AnimationRendererBase
 
         var cycleTime = elapsedSeconds % (_cycleGap + GetPatternDuration());
         
-        if (cycleTime < _cycleGap)
+        if (IsInCycleGap(cycleTime))
         {
-            // Gap between cycles
             controller.Show();
             return;
         }
 
         var patternTime = cycleTime - _cycleGap;
+        RenderPattern(controller, color, patternTime);
+        controller.Show();
+    }
 
+    private bool IsInCycleGap(double cycleTime) => cycleTime < _cycleGap;
+
+    private void RenderPattern(BlinktController controller, Color color, double time)
+    {
         switch (_pattern)
         {
             case "code1":
-                RenderCode1(controller, color, patternTime);
+                RenderCode1(controller, color, time);
                 break;
             case "code2":
-                RenderCode2(controller, color, patternTime);
+                RenderCode2(controller, color, time);
                 break;
             case "code3":
-                RenderCode3(controller, color, patternTime);
+                RenderCode3(controller, color, time);
                 break;
             case "code4":
-                RenderCode4(controller, color, patternTime);
+                RenderCode4(controller, color, time);
                 break;
             case "fling":
-                RenderFling(controller, color, patternTime);
+                RenderFling(controller, color, time);
                 break;
         }
-
-        controller.Show();
     }
 
     private void RenderCode1(BlinktController controller, Color color, double time)
     {
-        // Single flash
-        if (time < 0.1)
-        {
-            for (int i = 0; i < PixelCount; i++)
-                controller.SetPixel(i, color.R, color.G, color.B, _brightness);
-        }
+        if (!IsFlashActive(time, 0, 0.1))
+            return;
+
+        SetAllPixels(controller, color, _brightness);
     }
 
     private void RenderCode2(BlinktController controller, Color color, double time)
     {
-        // Double flash: flash-gap-flash
-        if (time < 0.1 || (time > 0.2 && time < 0.3))
-        {
-            for (int i = 0; i < PixelCount; i++)
-                controller.SetPixel(i, color.R, color.G, color.B, _brightness);
-        }
+        if (!IsFlashActive(time, 0, 0.1) && !IsFlashActive(time, 0.2, 0.3))
+            return;
+
+        SetAllPixels(controller, color, _brightness);
     }
 
     private void RenderCode3(BlinktController controller, Color color, double time)
     {
-        // Triple flash
-        if (time < 0.1 || (time > 0.15 && time < 0.25) || (time > 0.3 && time < 0.4))
-        {
-            for (int i = 0; i < PixelCount; i++)
-                controller.SetPixel(i, color.R, color.G, color.B, _brightness);
-        }
+        if (!IsFlashActive(time, 0, 0.1) && 
+            !IsFlashActive(time, 0.15, 0.25) && 
+            !IsFlashActive(time, 0.3, 0.4))
+            return;
+
+        SetAllPixels(controller, color, _brightness);
     }
 
     private void RenderCode4(BlinktController controller, Color color, double time)
     {
-        // Quadruple flash
-        if (time < 0.08 || (time > 0.12 && time < 0.2) || 
-            (time > 0.24 && time < 0.32) || (time > 0.36 && time < 0.44))
-        {
-            for (int i = 0; i < PixelCount; i++)
-                controller.SetPixel(i, color.R, color.G, color.B, _brightness);
-        }
+        if (!IsFlashActive(time, 0, 0.08) && 
+            !IsFlashActive(time, 0.12, 0.2) && 
+            !IsFlashActive(time, 0.24, 0.32) && 
+            !IsFlashActive(time, 0.36, 0.44))
+            return;
+
+        SetAllPixels(controller, color, _brightness);
     }
 
     private void RenderFling(BlinktController controller, Color color, double time)
     {
-        // Rotating beacon that sweeps around
         var position = (time * 3) % PixelCount; // 3 rotations per second
         var pixel = (int)position;
         
         controller.SetPixel(pixel, color.R, color.G, color.B, _brightness);
         
-        // Add trailing fade
         var prevPixel = (pixel - 1 + PixelCount) % PixelCount;
         controller.SetPixel(prevPixel, color.R, color.G, color.B, _brightness * 0.3);
     }
 
-    private double GetPatternDuration()
+    private bool IsFlashActive(double time, double start, double end) => 
+        time >= start && time < end;
+
+    private double GetPatternDuration() => _pattern switch
     {
-        return _pattern switch
-        {
-            "code1" => 0.1,
-            "code2" => 0.3,
-            "code3" => 0.4,
-            "code4" => 0.44,
-            "fling" => 1.0,
-            _ => 0.5
-        };
-    }
+        "code1" => 0.1,
+        "code2" => 0.3,
+        "code3" => 0.4,
+        "code4" => 0.44,
+        "fling" => 1.0,
+        _ => 0.5
+    };
 }

@@ -39,35 +39,39 @@ public class AircraftLightingRenderer : AnimationRendererBase
         // 5: Green (starboard/right wing)
         // 6-7: White tail beacon
 
-        // Navigation lights - always on
-        controller.SetPixel(0, 255, 0, 0, _navBrightness);     // Red port
-        controller.SetPixel(5, 0, 255, 0, _navBrightness);     // Green starboard
-
-        // Wing strobes - flash together
-        var strobePhase = (elapsedSeconds % _strobeInterval) / _strobeInterval;
-        if (strobePhase < 0.05) // Quick double flash
-        {
-            controller.SetPixel(1, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(2, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(3, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(4, 255, 255, 255, _strobeBrightness);
-        }
-        else if (strobePhase > 0.1 && strobePhase < 0.15)
-        {
-            controller.SetPixel(1, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(2, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(3, 255, 255, 255, _strobeBrightness);
-            controller.SetPixel(4, 255, 255, 255, _strobeBrightness);
-        }
-
-        // Tail beacon - rotating flash
-        var beaconPhase = (elapsedSeconds % _beaconInterval) / _beaconInterval;
-        if (beaconPhase < 0.1)
-        {
-            controller.SetPixel(6, 255, 255, 255, _beaconBrightness);
-            controller.SetPixel(7, 255, 255, 255, _beaconBrightness);
-        }
+        RenderNavigationLights(controller);
+        RenderWingStrobes(controller, elapsedSeconds);
+        RenderTailBeacon(controller, elapsedSeconds);
 
         controller.Show();
+    }
+
+    private void RenderNavigationLights(BlinktController controller)
+    {
+        controller.SetPixel(0, 255, 0, 0, _navBrightness);     // Red port
+        controller.SetPixel(5, 0, 255, 0, _navBrightness);     // Green starboard
+    }
+
+    private void RenderWingStrobes(BlinktController controller, double elapsedSeconds)
+    {
+        var strobePhase = (elapsedSeconds % _strobeInterval) / _strobeInterval;
+        
+        if (!IsStrobeFlashing(strobePhase))
+            return;
+
+        SetPixels(controller, 255, 255, 255, _strobeBrightness, 1, 2, 3, 4);
+    }
+
+    private bool IsStrobeFlashing(double phase) =>
+        phase < 0.05 || (phase > 0.1 && phase < 0.15);
+
+    private void RenderTailBeacon(BlinktController controller, double elapsedSeconds)
+    {
+        var beaconPhase = (elapsedSeconds % _beaconInterval) / _beaconInterval;
+        
+        if (beaconPhase >= 0.1)
+            return;
+
+        SetPixels(controller, 255, 255, 255, _beaconBrightness, 6, 7);
     }
 }
