@@ -16,7 +16,6 @@ builder.Services.AddHostedService<AnimationPlayer>();
 builder.Services.AddHostedService<AnimationHotReloadService>();
 
 // Register renderer factories
-builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.RainbowCycleFactory>();
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.AircraftLightingFactory>();
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.ScannerFactory>();
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.FillFactory>();

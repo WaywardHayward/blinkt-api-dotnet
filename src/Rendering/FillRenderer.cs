@@ -6,9 +6,11 @@ namespace BlinktApi.Rendering;
 
 public class FillRenderer : AnimationRendererBase
 {
-    public override string TypeKey => "fill";
+    public override string TypeKey => "sequential_fill";
     private readonly double _speed;
     private readonly double _brightness;
+    private Color _currentColor;
+    private int _litPixels;
 
     public FillRenderer(double speed, double brightness)
     {
@@ -17,17 +19,20 @@ public class FillRenderer : AnimationRendererBase
     }
 
     public static FillRenderer Create(JsonElement json) =>
-        new(json.GetDouble("speed"), json.GetDouble("brightness"));
+        new(json.GetDouble("fps"), json.GetDouble("brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
-        var lit = (int)((elapsedSeconds * _speed) % 9);
+        _currentColor = color;
+        _litPixels = (int)((elapsedSeconds * _speed) % 9);
         
-        ForEachPixel(blinkt, (ctrl, i) =>
-        {
-            var brightness = i < lit ? _brightness : 0.0;
-            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
-        });
+        ForEachPixel(blinkt, RenderPixel);
         blinkt.Show();
+    }
+
+    private void RenderPixel(BlinktController ctrl, int i)
+    {
+        var brightness = i < _litPixels ? _brightness : 0.0;
+        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
     }
 }

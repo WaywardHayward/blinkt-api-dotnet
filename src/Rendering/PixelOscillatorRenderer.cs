@@ -13,6 +13,7 @@ public class PixelOscillatorRenderer : AnimationRendererBase
     private readonly double _maxSpeed;
     private readonly double[] _phases;
     private readonly double[] _speeds;
+    private Color _currentColor;
 
     public PixelOscillatorRenderer(double minBrightness, double maxBrightness, double minSpeed, double maxSpeed)
     {
@@ -39,13 +40,16 @@ public class PixelOscillatorRenderer : AnimationRendererBase
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
-        ForEachPixel(blinkt, (ctrl, i) =>
-        {
-            _phases[i] += _speeds[i];
-            var brightness = (Math.Sin(_phases[i]) + 1) / 2;
-            brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
-            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
-        });
+        _currentColor = color;
+        ForEachPixel(blinkt, RenderPixel);
         blinkt.Show();
+    }
+
+    private void RenderPixel(BlinktController ctrl, int i)
+    {
+        _phases[i] += _speeds[i];
+        var brightness = (Math.Sin(_phases[i]) + 1) / 2;
+        brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
+        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
     }
 }

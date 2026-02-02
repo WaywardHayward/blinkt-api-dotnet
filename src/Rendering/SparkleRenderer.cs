@@ -9,6 +9,7 @@ public class SparkleRenderer : AnimationRendererBase
     public override string TypeKey => "sparkle";
     private readonly double _brightness;
     private readonly double _sparsity;
+    private Color _currentColor;
 
     public SparkleRenderer(double brightness, double sparsity)
     {
@@ -16,17 +17,19 @@ public class SparkleRenderer : AnimationRendererBase
         _sparsity = sparsity;
     }
 
-    public static SparkleRenderer Create(JsonElement json)
- =>
+    public static SparkleRenderer Create(JsonElement json) =>
         new(json.GetDouble("brightness"), json.GetDouble("sparsity"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
-        ForEachPixel(blinkt, (ctrl, i) =>
-        {
-            var brightness = Random.NextDouble() < _sparsity ? _brightness : 0.0;
-            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
-        });
+        _currentColor = color;
+        ForEachPixel(blinkt, RenderPixel);
         blinkt.Show();
+    }
+
+    private void RenderPixel(BlinktController ctrl, int i)
+    {
+        var brightness = Random.NextDouble() < _sparsity ? _brightness : 0.0;
+        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
     }
 }

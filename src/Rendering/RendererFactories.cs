@@ -17,12 +17,6 @@ public abstract class RendererFactoryBase<TRenderer> : IRendererFactory
 
 // Individual factory implementations - one per renderer
 
-public class RainbowCycleFactory : RendererFactoryBase<RainbowCycleRenderer>
-{
-    public override string TypeKey => "rainbow_cycle";
-    protected override RainbowCycleRenderer CreateTyped(JsonElement json) => RainbowCycleRenderer.Create(json);
-}
-
 public class AircraftLightingFactory : RendererFactoryBase<AircraftLightingRenderer>
 {
     public override string TypeKey => "aircraft_lighting";
@@ -37,7 +31,7 @@ public class ScannerFactory : RendererFactoryBase<ScannerRenderer>
 
 public class FillFactory : RendererFactoryBase<FillRenderer>
 {
-    public override string TypeKey => "fill";
+    public override string TypeKey => "sequential_fill";
     protected override FillRenderer CreateTyped(JsonElement json) => FillRenderer.Create(json);
 }
 
