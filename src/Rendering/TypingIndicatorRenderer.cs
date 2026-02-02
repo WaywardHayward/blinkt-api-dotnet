@@ -6,12 +6,11 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Three dots bouncing like a typing indicator
 /// </summary>
-public class TypingIndicatorRenderer : IAnimationRenderer
+public class TypingIndicatorRenderer : AnimationRendererBase
 {
     private readonly double _bounceSpeed;
     private readonly int _dotSpacing;
     private readonly double _brightness;
-    private const int PixelCount = 8;
 
     public TypingIndicatorRenderer(double bounceSpeed, int dotSpacing, double brightness)
     {
@@ -20,7 +19,7 @@ public class TypingIndicatorRenderer : IAnimationRenderer
         _brightness = brightness;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         controller.Clear();
 

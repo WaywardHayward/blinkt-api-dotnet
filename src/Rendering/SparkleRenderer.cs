@@ -3,9 +3,8 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class SparkleRenderer : IAnimationRenderer
+public class SparkleRenderer : AnimationRendererBase
 {
-    private readonly Random _random = new();
     private readonly double _brightness;
     private readonly double _sparsity;
 
@@ -15,11 +14,11 @@ public class SparkleRenderer : IAnimationRenderer
         _sparsity = sparsity;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         for (int i = 0; i < 8; i++)
         {
-            var brightness = _random.NextDouble() < _sparsity ? _brightness : 0.0;
+            var brightness = Random.NextDouble() < _sparsity ? _brightness : 0.0;
             blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
         }
         blinkt.Show();

@@ -6,14 +6,13 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Complete aircraft lighting system - navigation lights, strobes, and tail beacon
 /// </summary>
-public class AircraftLightingRenderer : IAnimationRenderer
+public class AircraftLightingRenderer : AnimationRendererBase
 {
     private readonly double _navBrightness;
     private readonly double _strobeBrightness;
     private readonly double _strobeInterval;
     private readonly double _beaconBrightness;
     private readonly double _beaconInterval;
-    private const int PixelCount = 8;
 
     public AircraftLightingRenderer(
         double navBrightness, 
@@ -29,7 +28,7 @@ public class AircraftLightingRenderer : IAnimationRenderer
         _beaconInterval = beaconInterval;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         controller.Clear();
 

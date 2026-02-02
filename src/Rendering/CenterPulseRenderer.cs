@@ -6,12 +6,11 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Heartbeat-style pulse emanating from center
 /// </summary>
-public class CenterPulseRenderer : IAnimationRenderer
+public class CenterPulseRenderer : AnimationRendererBase
 {
     private readonly double _pulseSpeed;
     private readonly double _maxBrightness;
     private readonly double _beatInterval;
-    private const int PixelCount = 8;
 
     public CenterPulseRenderer(double pulseSpeed, double maxBrightness, double beatInterval)
     {
@@ -24,7 +23,7 @@ public class CenterPulseRenderer : IAnimationRenderer
         _beatInterval = beatInterval;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Heartbeat: two pulses per beat interval
         var beatPhase = (elapsedSeconds % _beatInterval) / _beatInterval;

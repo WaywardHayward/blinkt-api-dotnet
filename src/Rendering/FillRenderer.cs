@@ -3,7 +3,7 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class FillRenderer : IAnimationRenderer
+public class FillRenderer : AnimationRendererBase
 {
     private readonly double _speed;
     private readonly double _brightness;
@@ -14,7 +14,7 @@ public class FillRenderer : IAnimationRenderer
         _brightness = brightness;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         var lit = (int)((elapsedSeconds * _speed) % 9);
         

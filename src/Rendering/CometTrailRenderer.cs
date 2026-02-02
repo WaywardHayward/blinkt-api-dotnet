@@ -6,13 +6,12 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Comet effect - bright head with long fading trail
 /// </summary>
-public class CometTrailRenderer : IAnimationRenderer
+public class CometTrailRenderer : AnimationRendererBase
 {
     private readonly double _speed;
     private readonly int _trailLength;
     private readonly double _headBrightness;
     private readonly double _fadeRate;
-    private const int PixelCount = 8;
 
     public CometTrailRenderer(double speed, int trailLength, double headBrightness, double fadeRate)
     {
@@ -22,7 +21,7 @@ public class CometTrailRenderer : IAnimationRenderer
         _fadeRate = fadeRate;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         var position = (elapsedSeconds * _speed) % PixelCount;
         var headPixel = (int)position;

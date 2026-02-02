@@ -7,11 +7,10 @@ namespace BlinktApi.Rendering;
 /// Progress bar that fills based on a parameter (0-100)
 /// Note: This is a basic implementation - progress value needs to be passed somehow
 /// </summary>
-public class ProgressBarRenderer : IAnimationRenderer
+public class ProgressBarRenderer : AnimationRendererBase
 {
     private readonly double _brightness;
     private readonly bool _smooth;
-    private const int PixelCount = 8;
 
     public ProgressBarRenderer(double brightness, bool smooth)
     {
@@ -19,7 +18,7 @@ public class ProgressBarRenderer : IAnimationRenderer
         _smooth = smooth;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Demo mode: animate 0-100% over 10 seconds
         var progress = (elapsedSeconds % 10) / 10.0 * 100;

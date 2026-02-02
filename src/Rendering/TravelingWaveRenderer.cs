@@ -3,7 +3,7 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class TravelingWaveRenderer : IAnimationRenderer
+public class TravelingWaveRenderer : AnimationRendererBase
 {
     private readonly double _speed;
     private readonly int _width;
@@ -16,7 +16,7 @@ public class TravelingWaveRenderer : IAnimationRenderer
         _maxBrightness = maxBrightness;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         var position = (elapsedSeconds * _speed) % 8;
         

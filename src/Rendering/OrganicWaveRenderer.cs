@@ -6,13 +6,12 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Organic wave effect with speed variation for natural motion
 /// </summary>
-public class OrganicWaveRenderer : IAnimationRenderer
+public class OrganicWaveRenderer : AnimationRendererBase
 {
     private readonly double _baseSpeed;
     private readonly double _speedVariation;
     private readonly int _width;
     private readonly double _maxBrightness;
-    private readonly Random _random = new();
     private double _currentSpeed;
     private double _speedChangeTime;
 
@@ -25,22 +24,22 @@ public class OrganicWaveRenderer : IAnimationRenderer
         _currentSpeed = baseSpeed;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         // Smoothly vary speed for organic feel
         if (elapsedSeconds > _speedChangeTime)
         {
-            _currentSpeed = _baseSpeed + (_random.NextDouble() - 0.5) * 2 * _speedVariation;
+            _currentSpeed = _baseSpeed + (Random.NextDouble() - 0.5) * 2 * _speedVariation;
             _speedChangeTime = elapsedSeconds + 2.0; // Change every 2 seconds
         }
 
-        var position = (elapsedSeconds * _currentSpeed) % 8;
+        var position = (elapsedSeconds * _currentSpeed) % PixelCount;
         
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < PixelCount; i++)
         {
             var distance = Math.Min(
                 Math.Abs(i - position),
-                8 - Math.Abs(i - position)
+                PixelCount - Math.Abs(i - position)
             );
             
             var brightness = distance < _width

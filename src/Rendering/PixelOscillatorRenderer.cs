@@ -3,13 +3,12 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class PixelOscillatorRenderer : IAnimationRenderer
+public class PixelOscillatorRenderer : AnimationRendererBase
 {
     private readonly double _minBrightness;
     private readonly double _maxBrightness;
     private readonly double _minSpeed;
     private readonly double _maxSpeed;
-    private readonly Random _random = new();
     private readonly double[] _phases;
     private readonly double[] _speeds;
 
@@ -24,12 +23,12 @@ public class PixelOscillatorRenderer : IAnimationRenderer
         _speeds = new double[8];
         for (int i = 0; i < 8; i++)
         {
-            _phases[i] = _random.NextDouble() * 2 * Math.PI;
-            _speeds[i] = _minSpeed + _random.NextDouble() * (_maxSpeed - _minSpeed);
+            _phases[i] = Random.NextDouble() * 2 * Math.PI;
+            _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
         }
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         for (int i = 0; i < 8; i++)
         {

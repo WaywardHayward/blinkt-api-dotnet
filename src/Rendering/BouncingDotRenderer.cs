@@ -6,11 +6,10 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Bouncing dot scanner effect with trailing fade
 /// </summary>
-public class BouncingDotRenderer : IAnimationRenderer
+public class BouncingDotRenderer : AnimationRendererBase
 {
     private readonly int _trailLength;
     private readonly double[] _brightness;
-    private const int PixelCount = 8;
 
     public BouncingDotRenderer(int trailLength, double[] brightness)
     {
@@ -18,7 +17,7 @@ public class BouncingDotRenderer : IAnimationRenderer
         _brightness = brightness;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Calculate position (bounce back and forth)
         var cycleLength = (PixelCount - 1) * 2;

@@ -6,12 +6,11 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Aurora borealis effect with slow color shifts
 /// </summary>
-public class AuroraRenderer : IAnimationRenderer
+public class AuroraRenderer : AnimationRendererBase
 {
     private readonly double _speed;
     private readonly double _brightnessVariation;
     private readonly double _maxBrightness;
-    private const int PixelCount = 8;
 
     public AuroraRenderer(double speed, double brightnessVariation, double maxBrightness)
     {
@@ -20,7 +19,7 @@ public class AuroraRenderer : IAnimationRenderer
         _maxBrightness = maxBrightness;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         for (int i = 0; i < PixelCount; i++)
         {

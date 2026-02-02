@@ -6,15 +6,12 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Spawn and fade effect - pixels randomly light up and fade out (like rain, snow, sparkles)
 /// </summary>
-public class SpawnFadeRenderer : IAnimationRenderer
+public class SpawnFadeRenderer : AnimationRendererBase
 {
     private readonly double _spawnChance;
     private readonly int _fadeFrames;
     private readonly double _maxBrightness;
-    private readonly Random _random = new();
     private readonly Dictionary<int, int> _activePixels = new(); // pixel -> frames alive
-    private const int PixelCount = 8;
-    private int _frameCount = 0;
 
     public SpawnFadeRenderer(double spawnChance, int fadeFrames, double maxBrightness)
     {
@@ -23,14 +20,12 @@ public class SpawnFadeRenderer : IAnimationRenderer
         _maxBrightness = maxBrightness;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        _frameCount++;
-
         // Spawn new pixels randomly
         for (int i = 0; i < PixelCount; i++)
         {
-            if (!_activePixels.ContainsKey(i) && _random.NextDouble() < _spawnChance)
+            if (!_activePixels.ContainsKey(i) && Random.NextDouble() < _spawnChance)
             {
                 _activePixels[i] = 0;
             }

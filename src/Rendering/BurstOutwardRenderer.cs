@@ -6,12 +6,11 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Burst expanding outward from center like an explosion
 /// </summary>
-public class BurstOutwardRenderer : IAnimationRenderer
+public class BurstOutwardRenderer : AnimationRendererBase
 {
     private readonly double _burstSpeed;
     private readonly double _fadeSpeed;
     private readonly double _maxBrightness;
-    private const int PixelCount = 8;
 
     public BurstOutwardRenderer(double burstSpeed, double fadeSpeed, double maxBrightness)
     {
@@ -20,7 +19,7 @@ public class BurstOutwardRenderer : IAnimationRenderer
         _maxBrightness = maxBrightness;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Wave expands from center outward
         // For even pixel count, center between the two middle LEDs for symmetry

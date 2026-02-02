@@ -3,7 +3,7 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class GlobalOscillatorRenderer : IAnimationRenderer
+public class GlobalOscillatorRenderer : AnimationRendererBase
 {
     private readonly double _periodSeconds;
     private readonly double _minBrightness;
@@ -18,7 +18,7 @@ public class GlobalOscillatorRenderer : IAnimationRenderer
         _oscillator = oscillator;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         var phase = (elapsedSeconds / _periodSeconds) * 2 * Math.PI;
         var brightness = _oscillator switch

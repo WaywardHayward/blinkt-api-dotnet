@@ -3,7 +3,7 @@ using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class ScannerRenderer : IAnimationRenderer
+public class ScannerRenderer : AnimationRendererBase
 {
     private readonly double _speed;
     private readonly double _maxBrightness;
@@ -14,7 +14,7 @@ public class ScannerRenderer : IAnimationRenderer
         _maxBrightness = maxBrightness;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         var cycle = (elapsedSeconds * _speed) % 2.0;
         var position = cycle < 1.0 ? cycle * 7 : (2.0 - cycle) * 7;

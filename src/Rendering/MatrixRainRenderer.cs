@@ -6,15 +6,13 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Matrix-style falling pixels with trails
 /// </summary>
-public class MatrixRainRenderer : IAnimationRenderer
+public class MatrixRainRenderer : AnimationRendererBase
 {
     private readonly double _spawnChance;
     private readonly int _fallSpeed;
     private readonly int _trailLength;
     private readonly double _maxBrightness;
-    private readonly Random _random = new();
-    private readonly Dictionary<int, List<double>> _columns = new(); // column -> list of positions
-    private const int PixelCount = 8;
+    private readonly List<double> _drops = new(); // positions of falling drops
 
     public MatrixRainRenderer(double spawnChance, int fallSpeed, int trailLength, double maxBrightness)
     {
@@ -22,24 +20,21 @@ public class MatrixRainRenderer : IAnimationRenderer
         _fallSpeed = fallSpeed;
         _trailLength = trailLength;
         _maxBrightness = maxBrightness;
-        
-        // Initialize columns (we only have 8 pixels, treat as one vertical column)
-        _columns[0] = new List<double>();
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Spawn new drops
-        if (_random.NextDouble() < _spawnChance)
+        if (Random.NextDouble() < _spawnChance)
         {
-            _columns[0].Add(0);
+            _drops.Add(0);
         }
 
         controller.Clear();
 
         // Update and render drops
         var toRemove = new List<double>();
-        foreach (var position in _columns[0].ToList())
+        foreach (var position in _drops.ToList())
         {
             var currentPos = position + (elapsedSeconds * _fallSpeed);
             
@@ -63,7 +58,7 @@ public class MatrixRainRenderer : IAnimationRenderer
 
         foreach (var pos in toRemove)
         {
-            _columns[0].Remove(pos);
+            _drops.Remove(pos);
         }
 
         controller.Show();

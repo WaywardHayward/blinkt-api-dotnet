@@ -6,12 +6,11 @@ namespace BlinktApi.Rendering;
 /// <summary>
 /// Aviation beacon patterns - rotating light with specific flash codes
 /// </summary>
-public class AviationBeaconRenderer : IAnimationRenderer
+public class AviationBeaconRenderer : AnimationRendererBase
 {
     private readonly string _pattern;
     private readonly double _brightness;
     private readonly double _cycleGap;
-    private const int PixelCount = 8;
 
     public AviationBeaconRenderer(string pattern, double brightness, double cycleGap)
     {
@@ -20,7 +19,7 @@ public class AviationBeaconRenderer : IAnimationRenderer
         _cycleGap = cycleGap;
     }
 
-    public void Render(BlinktController controller, Color color, double elapsedSeconds)
+    public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         controller.Clear();
 
