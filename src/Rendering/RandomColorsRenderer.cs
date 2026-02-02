@@ -33,8 +33,14 @@ public class RandomColorsRenderer : AnimationRendererBase
             _lastChangeTime = elapsedSeconds;
         }
 
-        RenderCurrentColors(controller);
+        ForEachPixel(controller, RenderPixel);
         controller.Show();
+    }
+
+    private void RenderPixel(BlinktController ctrl, int i)
+    {
+        var c = _currentColors[i];
+        ctrl.SetPixel(i, c.R, c.G, c.B, _brightness);
     }
 
     private void InitializeRandomColors()
@@ -48,15 +54,6 @@ public class RandomColorsRenderer : AnimationRendererBase
     private void UpdateAllColors()
     {
         ForEachPixel(i => _currentColors[i] = GetRandomColor());
-    }
-
-    private void RenderCurrentColors(BlinktController controller)
-    {
-        ForEachPixel(controller, (ctrl, i) =>
-        {
-            var c = _currentColors[i];
-            ctrl.SetPixel(i, c.R, c.G, c.B, _brightness);
-        });
     }
 
     private Color GetRandomColor()

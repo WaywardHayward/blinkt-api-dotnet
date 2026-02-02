@@ -22,13 +22,9 @@ public class PixelOscillatorRenderer : AnimationRendererBase
         _minSpeed = minSpeed;
         _maxSpeed = maxSpeed;
         
-        _phases = new double[8];
-        _speeds = new double[8];
-        for (int i = 0; i < 8; i++)
-        {
-            _phases[i] = Random.NextDouble() * 2 * Math.PI;
-            _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
-        }
+        _phases = new double[PixelCount];
+        _speeds = new double[PixelCount];
+        InitializePhases();
     }
 
     public static PixelOscillatorRenderer Create(JsonElement json)
@@ -43,6 +39,15 @@ public class PixelOscillatorRenderer : AnimationRendererBase
         _currentColor = color;
         ForEachPixel(blinkt, RenderPixel);
         blinkt.Show();
+    }
+
+    private void InitializePhases()
+    {
+        ForEachPixel(i =>
+        {
+            _phases[i] = Random.NextDouble() * 2 * Math.PI;
+            _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
+        });
     }
 
     private void RenderPixel(BlinktController ctrl, int i)

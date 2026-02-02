@@ -14,6 +14,7 @@ public class OrganicFireRenderer : AnimationRendererBase
     private readonly double _flickerAmount;
     private readonly double _emberChance;
     private readonly double _emberBrightness;
+    private Color _currentColor;
 
     public OrganicFireRenderer(double baseBrightness, double flickerAmount, double emberChance, double emberBrightness)
     {
@@ -23,20 +24,21 @@ public class OrganicFireRenderer : AnimationRendererBase
         _emberBrightness = emberBrightness;
     }
 
-    public static OrganicFireRenderer Create(JsonElement json)
- =>
+    public static OrganicFireRenderer Create(JsonElement json) =>
         new(json.GetDouble("base_brightness"), json.GetDouble("flicker_amount"), json.GetDouble("ember_chance"), json.GetDouble("ember_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        ForEachPixel(controller, (ctrl, i) =>
-        {
-            var brightness = CalculatePixelBrightness();
-            var (r, g, b) = CalculateColorWithWarmth(color);
-            ctrl.SetPixel(i, r, g, b, brightness);
-        });
-        
+        _currentColor = color;
+        ForEachPixel(controller, RenderPixel);
         controller.Show();
+    }
+
+    private void RenderPixel(BlinktController ctrl, int i)
+    {
+        var brightness = CalculatePixelBrightness();
+        var (r, g, b) = CalculateColorWithWarmth(_currentColor);
+        ctrl.SetPixel(i, r, g, b, brightness);
     }
 
     private double CalculatePixelBrightness()
