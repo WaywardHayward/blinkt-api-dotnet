@@ -37,11 +37,13 @@ public class SpawnFadeRenderer : AnimationRendererBase
 
     private void SpawnNewPixels()
     {
-        ForEachPixel(i =>
-        {
-            if (ShouldSpawnPixel(i))
-                _activePixels[i] = 0;
-        });
+        ForEachPixel(TrySpawnPixel);
+    }
+
+    private void TrySpawnPixel(int i)
+    {
+        if (ShouldSpawnPixel(i))
+            _activePixels[i] = 0;
     }
 
     private bool ShouldSpawnPixel(int pixel) =>

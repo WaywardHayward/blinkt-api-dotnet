@@ -45,7 +45,12 @@ public class RandomColorsRenderer : AnimationRendererBase
 
     private void InitializeRandomColors()
     {
-        ForEachPixel(i => _currentColors[i] = GetRandomColor());
+        ForEachPixel(SetRandomColor);
+    }
+
+    private void SetRandomColor(int i)
+    {
+        _currentColors[i] = GetRandomColor();
     }
 
     private bool ShouldChangeColors(double elapsedSeconds) =>
@@ -53,7 +58,7 @@ public class RandomColorsRenderer : AnimationRendererBase
 
     private void UpdateAllColors()
     {
-        ForEachPixel(i => _currentColors[i] = GetRandomColor());
+        ForEachPixel(SetRandomColor);
     }
 
     private Color GetRandomColor()

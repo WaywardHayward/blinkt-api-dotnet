@@ -43,11 +43,13 @@ public class PixelOscillatorRenderer : AnimationRendererBase
 
     private void InitializePhases()
     {
-        ForEachPixel(i =>
-        {
-            _phases[i] = Random.NextDouble() * 2 * Math.PI;
-            _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
-        });
+        ForEachPixel(InitializePixelPhase);
+    }
+
+    private void InitializePixelPhase(int i)
+    {
+        _phases[i] = Random.NextDouble() * 2 * Math.PI;
+        _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
     }
 
     private void RenderPixel(BlinktController ctrl, int i)
