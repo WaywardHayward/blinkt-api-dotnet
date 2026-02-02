@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class FillRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "fill";
     private readonly double _speed;
     private readonly double _brightness;
 
@@ -13,6 +15,9 @@ public class FillRenderer : AnimationRendererBase
         _speed = speed;
         _brightness = brightness;
     }
+
+    public static FillRenderer Create(JsonElement json) =>
+        new(json.GetDouble("speed"), json.GetDouble("brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {

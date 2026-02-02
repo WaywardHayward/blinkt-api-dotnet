@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class SparkleRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "sparkle";
     private readonly double _brightness;
     private readonly double _sparsity;
 

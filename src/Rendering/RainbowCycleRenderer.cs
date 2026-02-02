@@ -1,10 +1,13 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class RainbowCycleRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "rainbow_cycle";
+    
     private readonly double _speed;
     private readonly double _brightness;
 
@@ -13,6 +16,9 @@ public class RainbowCycleRenderer : AnimationRendererBase
         _speed = speed;
         _brightness = brightness;
     }
+
+    public static RainbowCycleRenderer Create(JsonElement json) =>
+        new(json.GetDouble("speed"), json.GetDouble("brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {

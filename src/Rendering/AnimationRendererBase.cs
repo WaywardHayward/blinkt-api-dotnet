@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -10,6 +11,12 @@ public abstract class AnimationRendererBase : IAnimationRenderer
 {
     protected const int PixelCount = RenderingHelpers.PixelCount;
     protected static Random Random => RenderingHelpers.Random;
+    
+    /// <summary>
+    /// Unique key identifying this renderer type (e.g., "rainbow_cycle", "aircraft_lighting")
+    /// Override this in derived classes to enable reflection-based discovery
+    /// </summary>
+    public virtual string? TypeKey => null;
     
     public abstract void Render(BlinktController controller, Color color, double elapsedSeconds);
 
@@ -91,4 +98,31 @@ public abstract class AnimationRendererBase : IAnimationRenderer
     {
         ForEachPixel(i => controller.SetPixel(i, color.R, color.G, color.B, brightness));
     }
+}
+
+/// <summary>
+/// JSON parsing extension methods for renderer factories
+/// </summary>
+public static class JsonElementExtensions
+{
+    public static double GetDouble(this JsonElement json, string property) =>
+        json.GetProperty(property).GetDouble();
+
+    public static int GetInt(this JsonElement json, string property) =>
+        json.GetProperty(property).GetInt32();
+
+    public static bool GetBool(this JsonElement json, string property) =>
+        json.GetProperty(property).GetBoolean();
+
+    public static string GetString(this JsonElement json, string property, string defaultValue = "") =>
+        json.GetProperty(property).GetString() ?? defaultValue;
+
+    public static (double min, double max) GetRange(this JsonElement json, string property)
+    {
+        var range = json.GetProperty(property);
+        return (range[0].GetDouble(), range[1].GetDouble());
+    }
+
+    public static double[] GetDoubleArray(this JsonElement json, string property) =>
+        json.GetProperty(property).EnumerateArray().Select(e => e.GetDouble()).ToArray();
 }

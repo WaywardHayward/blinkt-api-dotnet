@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class RandomSingleRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "random_single";
     private readonly double _brightness;
 
     public RandomSingleRenderer(double brightness)

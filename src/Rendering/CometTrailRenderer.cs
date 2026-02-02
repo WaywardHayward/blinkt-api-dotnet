@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class CometTrailRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "comet_trail";
     private readonly double _speed;
     private readonly int _trailLength;
     private readonly double _headBrightness;

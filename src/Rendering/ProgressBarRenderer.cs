@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -9,6 +10,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class ProgressBarRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "progress_bar";
     private readonly double _brightness;
     private readonly bool _smooth;
 

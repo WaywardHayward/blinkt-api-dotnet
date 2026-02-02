@@ -1,10 +1,13 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class ScannerRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "scanner";
+    
     private readonly double _speed;
     private readonly double _maxBrightness;
 
@@ -13,6 +16,9 @@ public class ScannerRenderer : AnimationRendererBase
         _speed = speed;
         _maxBrightness = maxBrightness;
     }
+
+    public static ScannerRenderer Create(JsonElement json) =>
+        new(json.GetDouble("speed"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
