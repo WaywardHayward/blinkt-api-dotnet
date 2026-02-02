@@ -16,10 +16,12 @@ public class AnimationController
     private IAnimationRenderer? _currentRenderer;
     private readonly object _lock = new();
     private readonly ILogger<AnimationController> _logger;
+    private readonly RendererFactory _rendererFactory;
 
-    public AnimationController(ILogger<AnimationController> logger)
+    public AnimationController(ILogger<AnimationController> logger, RendererFactory rendererFactory)
     {
         _logger = logger;
+        _rendererFactory = rendererFactory;
     }
 
     public void LoadAnimations(string animationsPath)
@@ -84,7 +86,7 @@ public class AnimationController
                 throw new KeyNotFoundException($"Animation '{name}' not found");
             }
 
-            var renderer = RendererFactory.CreateRenderer(animation);
+            var renderer = _rendererFactory.CreateRenderer(animation);
             if (renderer == null)
             {
                 _logger.LogError("Failed to create renderer for animation: {Name}", name);
@@ -145,7 +147,7 @@ public class AnimationController
             return false;
 
         _currentState = previous;
-        _currentRenderer = RendererFactory.CreateRenderer(animation);
+        _currentRenderer = _rendererFactory.CreateRenderer(animation);
         _logger.LogInformation("Popped back to animation: {Name} (stack depth: {Depth})", previous.Name, _stack.Count);
         return true;
     }

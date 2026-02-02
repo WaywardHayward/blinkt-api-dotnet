@@ -15,6 +15,35 @@ builder.Services.AddSingleton<AnimationController>();
 builder.Services.AddHostedService<AnimationPlayer>();
 builder.Services.AddHostedService<AnimationHotReloadService>();
 
+// Register renderer factories
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.RainbowCycleFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.AircraftLightingFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.ScannerFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.FillFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.SparkleFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.RandomSingleFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.RandomColorsFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.CometTrailFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.ProgressBarFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.GlobalOscillatorFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.PixelOscillatorFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.TravelingWaveFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.CenterPulseFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.BurstOutwardFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.ColorCycleFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.BouncingDotFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.SpawnFadeFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.FireFlickerFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.AviationBeaconFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.OrganicWaveFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.OrganicFireFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.AuroraFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.TypingIndicatorFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.MatrixRainFactory>();
+
+// Register the main factory
+builder.Services.AddSingleton<BlinktApi.Rendering.RendererFactory>();
+
 // Add Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
