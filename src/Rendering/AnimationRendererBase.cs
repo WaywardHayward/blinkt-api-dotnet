@@ -30,6 +30,28 @@ public abstract class AnimationRendererBase : IAnimationRenderer
     }
 
     /// <summary>
+    /// Execute a function for each pixel
+    /// </summary>
+    protected void ForEachPixel(Action<int> action)
+    {
+        for (int i = 0; i < PixelCount; i++)
+        {
+            action(i);
+        }
+    }
+
+    /// <summary>
+    /// Execute a function for each pixel with the controller
+    /// </summary>
+    protected void ForEachPixel(BlinktController controller, Action<BlinktController, int> action)
+    {
+        for (int i = 0; i < PixelCount; i++)
+        {
+            action(controller, i);
+        }
+    }
+
+    /// <summary>
     /// Set the same color/brightness on multiple pixels
     /// </summary>
     protected void SetPixels(BlinktController controller, Color color, double brightness, params int[] pixels)
@@ -67,9 +89,6 @@ public abstract class AnimationRendererBase : IAnimationRenderer
     /// </summary>
     protected void SetAllPixels(BlinktController controller, Color color, double brightness)
     {
-        for (int i = 0; i < PixelCount; i++)
-        {
-            controller.SetPixel(i, color.R, color.G, color.B, brightness);
-        }
+        ForEachPixel(i => controller.SetPixel(i, color.R, color.G, color.B, brightness));
     }
 }

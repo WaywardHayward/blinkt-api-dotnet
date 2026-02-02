@@ -17,33 +17,41 @@ public class RandomColorsRenderer : AnimationRendererBase
     {
         _changeRate = changeRate;
         _brightness = brightness;
-        
-        // Initialize with random colors
-        for (int i = 0; i < PixelCount; i++)
-        {
-            _currentColors[i] = GetRandomColor();
-        }
+        InitializeRandomColors();
     }
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        // Change colors at specified rate
-        if (elapsedSeconds - _lastChangeTime > _changeRate)
+        if (ShouldChangeColors(elapsedSeconds))
         {
-            for (int i = 0; i < PixelCount; i++)
-            {
-                _currentColors[i] = GetRandomColor();
-            }
+            UpdateAllColors();
             _lastChangeTime = elapsedSeconds;
         }
 
-        for (int i = 0; i < PixelCount; i++)
+        RenderCurrentColors(controller);
+        controller.Show();
+    }
+
+    private void InitializeRandomColors()
+    {
+        ForEachPixel(i => _currentColors[i] = GetRandomColor());
+    }
+
+    private bool ShouldChangeColors(double elapsedSeconds) =>
+        elapsedSeconds - _lastChangeTime > _changeRate;
+
+    private void UpdateAllColors()
+    {
+        ForEachPixel(i => _currentColors[i] = GetRandomColor());
+    }
+
+    private void RenderCurrentColors(BlinktController controller)
+    {
+        ForEachPixel(controller, (ctrl, i) =>
         {
             var c = _currentColors[i];
-            controller.SetPixel(i, c.R, c.G, c.B, _brightness);
-        }
-
-        controller.Show();
+            ctrl.SetPixel(i, c.R, c.G, c.B, _brightness);
+        });
     }
 
     private Color GetRandomColor()

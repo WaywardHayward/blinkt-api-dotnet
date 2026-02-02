@@ -22,45 +22,57 @@ public class SpawnFadeRenderer : AnimationRendererBase
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        // Spawn new pixels randomly
-        for (int i = 0; i < PixelCount; i++)
-        {
-            if (!_activePixels.ContainsKey(i) && Random.NextDouble() < _spawnChance)
-            {
-                _activePixels[i] = 0;
-            }
-        }
-
+        SpawnNewPixels();
         controller.Clear();
+        UpdateAndRenderActivePixels(controller, color);
+        RemoveDeadPixels();
+        controller.Show();
+    }
 
-        // Update and render active pixels
-        var pixelsToRemove = new List<int>();
+    private void SpawnNewPixels()
+    {
+        ForEachPixel(i =>
+        {
+            if (ShouldSpawnPixel(i))
+                _activePixels[i] = 0;
+        });
+    }
+
+    private bool ShouldSpawnPixel(int pixel) =>
+        !_activePixels.ContainsKey(pixel) && Random.NextDouble() < _spawnChance;
+
+    private void UpdateAndRenderActivePixels(BlinktController controller, Color color)
+    {
         foreach (var kvp in _activePixels)
         {
             var pixel = kvp.Key;
             var age = kvp.Value;
 
             if (age >= _fadeFrames)
-            {
-                pixelsToRemove.Add(pixel);
                 continue;
-            }
 
-            // Fade brightness over lifetime
-            var lifetimeProgress = (double)age / _fadeFrames;
-            var brightness = _maxBrightness * (1.0 - lifetimeProgress);
-
+            var brightness = CalculateFadedBrightness(age);
             controller.SetPixel(pixel, color.R, color.G, color.B, brightness);
-            
             _activePixels[pixel] = age + 1;
         }
+    }
 
-        // Clean up dead pixels
+    private double CalculateFadedBrightness(int age)
+    {
+        var lifetimeProgress = (double)age / _fadeFrames;
+        return _maxBrightness * (1.0 - lifetimeProgress);
+    }
+
+    private void RemoveDeadPixels()
+    {
+        var pixelsToRemove = _activePixels
+            .Where(kvp => kvp.Value >= _fadeFrames)
+            .Select(kvp => kvp.Key)
+            .ToList();
+
         foreach (var pixel in pixelsToRemove)
         {
             _activePixels.Remove(pixel);
         }
-
-        controller.Show();
     }
 }

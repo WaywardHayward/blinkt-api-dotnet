@@ -23,31 +23,40 @@ public class OrganicFireRenderer : AnimationRendererBase
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        for (int i = 0; i < PixelCount; i++)
+        ForEachPixel(controller, (ctrl, i) =>
         {
-            double brightness;
-            
-            // Random ember pop
-            if (Random.NextDouble() < _emberChance)
-            {
-                brightness = _emberBrightness;
-            }
-            else
-            {
-                // Normal flicker
-                var flicker = (Random.NextDouble() - 0.5) * 2 * _flickerAmount;
-                brightness = Math.Max(0, _baseBrightness + flicker);
-            }
-
-            // Vary color warmth
-            var colorShift = (Random.NextDouble() - 0.5) * 0.3;
-            var r = (byte)Math.Clamp(color.R + (int)(colorShift * 60), 0, 255);
-            var g = (byte)Math.Clamp(color.G + (int)(colorShift * 40), 0, 255);
-            var b = (byte)Math.Clamp(color.B - (int)(colorShift * 30), 0, 255);
-
-            controller.SetPixel(i, r, g, b, brightness);
-        }
-
+            var brightness = CalculatePixelBrightness();
+            var (r, g, b) = CalculateColorWithWarmth(color);
+            ctrl.SetPixel(i, r, g, b, brightness);
+        });
+        
         controller.Show();
+    }
+
+    private double CalculatePixelBrightness()
+    {
+        if (IsEmber())
+            return _emberBrightness;
+
+        return CalculateFlickerBrightness();
+    }
+
+    private bool IsEmber() => Random.NextDouble() < _emberChance;
+
+    private double CalculateFlickerBrightness()
+    {
+        var flicker = (Random.NextDouble() - 0.5) * 2 * _flickerAmount;
+        return Math.Max(0, _baseBrightness + flicker);
+    }
+
+    private (byte r, byte g, byte b) CalculateColorWithWarmth(Color baseColor)
+    {
+        var colorShift = (Random.NextDouble() - 0.5) * 0.3;
+        
+        var r = (byte)Math.Clamp(baseColor.R + (int)(colorShift * 60), 0, 255);
+        var g = (byte)Math.Clamp(baseColor.G + (int)(colorShift * 40), 0, 255);
+        var b = (byte)Math.Clamp(baseColor.B - (int)(colorShift * 30), 0, 255);
+
+        return (r, g, b);
     }
 }
