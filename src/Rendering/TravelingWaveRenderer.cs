@@ -26,7 +26,7 @@ public class TravelingWaveRenderer : AnimationRendererBase
     {
         var position = (elapsedSeconds * _speed) % 8;
         
-        for (int i = 0; i < 8; i++)
+        ForEachPixel(blinkt, (ctrl, i) =>
         {
             var distance = Math.Min(
                 Math.Abs(i - position),
@@ -37,8 +37,8 @@ public class TravelingWaveRenderer : AnimationRendererBase
                 ? _maxBrightness * (1.0 - distance / _width)
                 : 0.0;
                 
-            blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
-        }
+            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
+        });
         blinkt.Show();
     }
 }

@@ -22,11 +22,11 @@ public class SparkleRenderer : AnimationRendererBase
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
-        for (int i = 0; i < 8; i++)
+        ForEachPixel(blinkt, (ctrl, i) =>
         {
             var brightness = Random.NextDouble() < _sparsity ? _brightness : 0.0;
-            blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
-        }
+            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
+        });
         blinkt.Show();
     }
 }

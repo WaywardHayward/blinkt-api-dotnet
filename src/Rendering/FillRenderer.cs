@@ -23,11 +23,11 @@ public class FillRenderer : AnimationRendererBase
     {
         var lit = (int)((elapsedSeconds * _speed) % 9);
         
-        for (int i = 0; i < 8; i++)
+        ForEachPixel(blinkt, (ctrl, i) =>
         {
             var brightness = i < lit ? _brightness : 0.0;
-            blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
-        }
+            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
+        });
         blinkt.Show();
     }
 }

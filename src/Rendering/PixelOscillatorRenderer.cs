@@ -39,13 +39,13 @@ public class PixelOscillatorRenderer : AnimationRendererBase
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
-        for (int i = 0; i < 8; i++)
+        ForEachPixel(blinkt, (ctrl, i) =>
         {
             _phases[i] += _speeds[i];
             var brightness = (Math.Sin(_phases[i]) + 1) / 2;
             brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
-            blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
-        }
+            ctrl.SetPixel(i, color.R, color.G, color.B, brightness);
+        });
         blinkt.Show();
     }
 }
