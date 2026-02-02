@@ -17,6 +17,11 @@ public class CometTrailRenderer : AnimationRendererBase
 
     public CometTrailRenderer(double speed, int trailLength, double headBrightness, double fadeRate)
     {
+        if (headBrightness < 0 || headBrightness > 1)
+            throw new ArgumentOutOfRangeException(nameof(headBrightness), "Head brightness must be between 0.0 and 1.0.");
+        if (fadeRate < 0 || fadeRate > 1)
+            throw new ArgumentOutOfRangeException(nameof(fadeRate), "Fade rate must be between 0.0 and 1.0.");
+        
         _speed = speed;
         _trailLength = trailLength;
         _headBrightness = headBrightness;
@@ -29,6 +34,7 @@ public class CometTrailRenderer : AnimationRendererBase
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         var position = (elapsedSeconds * _speed) % PixelCount;
+        if (position < 0) position += PixelCount;
         var headPixel = (int)position;
 
         controller.Clear();

@@ -42,9 +42,9 @@ public class AuroraRenderer : AnimationRendererBase
             brightness = Math.Clamp(brightness, 0, _maxBrightness);
             
             // Shift towards green/cyan for aurora colors
-            var r = (byte)(color.R * 0.3);
-            var g = (byte)(color.G * 1.2);
-            var b = (byte)(color.B * 0.9);
+            var r = (byte)Math.Clamp(color.R * 0.3, 0, 255);
+            var g = (byte)Math.Clamp(color.G * 1.2, 0, 255);
+            var b = (byte)Math.Clamp(color.B * 0.9, 0, 255);
 
             controller.SetPixel(i, r, g, b, brightness);
         }

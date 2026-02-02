@@ -24,6 +24,11 @@ public class AircraftLightingRenderer : AnimationRendererBase
         double beaconBrightness,
         double beaconInterval)
     {
+        if (strobeInterval <= 0)
+            throw new ArgumentOutOfRangeException(nameof(strobeInterval), "Strobe interval must be positive.");
+        if (beaconInterval <= 0)
+            throw new ArgumentOutOfRangeException(nameof(beaconInterval), "Beacon interval must be positive.");
+        
         _navBrightness = navBrightness;
         _strobeBrightness = strobeBrightness;
         _strobeInterval = strobeInterval;

@@ -85,6 +85,9 @@ public abstract class AnimationRendererBase : IAnimationRenderer
     /// </summary>
     protected void SetPixelRange(BlinktController controller, Color color, double brightness, int start, int count)
     {
+        if (start < 0 || count < 0)
+            throw new ArgumentOutOfRangeException("start/count must be non-negative.");
+        
         for (int i = start; i < start + count && i < PixelCount; i++)
         {
             controller.SetPixel(i, color.R, color.G, color.B, brightness);
@@ -115,11 +118,14 @@ public static class JsonElementExtensions
         json.GetProperty(property).GetBoolean();
 
     public static string GetString(this JsonElement json, string property, string defaultValue = "") =>
-        json.GetProperty(property).GetString() ?? defaultValue;
+        json.TryGetProperty(property, out var prop)
+            ? prop.GetString() ?? defaultValue
+            : defaultValue;
 
     public static (double min, double max) GetRange(this JsonElement json, string property)
     {
-        var range = json.GetProperty(property);
+        if (!json.TryGetProperty(property, out var range) || range.GetArrayLength() < 2)
+            throw new JsonException($"Expected '{property}' to be an array with at least 2 elements.");
         return (range[0].GetDouble(), range[1].GetDouble());
     }
 

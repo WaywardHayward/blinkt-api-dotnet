@@ -146,8 +146,15 @@ public class AnimationController
         if (animation == null)
             return false;
 
+        var renderer = _rendererFactory.CreateRenderer(animation);
+        if (renderer == null)
+        {
+            _logger.LogError("Failed to create renderer for animation: {Name}", previous.Name);
+            return false;
+        }
+
         _currentState = previous;
-        _currentRenderer = _rendererFactory.CreateRenderer(animation);
+        _currentRenderer = renderer;
         _logger.LogInformation("Popped back to animation: {Name} (stack depth: {Depth})", previous.Name, _stack.Count);
         return true;
     }

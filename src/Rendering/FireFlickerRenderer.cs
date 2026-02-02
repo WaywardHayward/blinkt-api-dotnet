@@ -31,7 +31,7 @@ public class FireFlickerRenderer : AnimationRendererBase
         {
             // Random flicker for each pixel
             var flicker = (Random.NextDouble() - 0.5) * 2 * _flickerAmount;
-            var brightness = Math.Max(0, _baseBrightness + flicker);
+            var brightness = Math.Clamp(_baseBrightness + flicker, 0, 1);
 
             // Vary color temperature (more red/orange variation)
             var colorShift = (Random.NextDouble() - 0.5) * _colorVariation;

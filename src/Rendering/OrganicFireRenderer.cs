@@ -44,7 +44,7 @@ public class OrganicFireRenderer : AnimationRendererBase
     private double CalculatePixelBrightness()
     {
         if (IsEmber())
-            return _emberBrightness;
+            return Math.Min(_emberBrightness, 1.0);
 
         return CalculateFlickerBrightness();
     }
@@ -54,7 +54,7 @@ public class OrganicFireRenderer : AnimationRendererBase
     private double CalculateFlickerBrightness()
     {
         var flicker = (Random.NextDouble() - 0.5) * 2 * _flickerAmount;
-        return Math.Max(0, _baseBrightness + flicker);
+        return Math.Clamp(_baseBrightness + flicker, 0, 1);
     }
 
     private (byte r, byte g, byte b) CalculateColorWithWarmth(Color baseColor)

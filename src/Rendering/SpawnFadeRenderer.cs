@@ -17,6 +17,9 @@ public class SpawnFadeRenderer : AnimationRendererBase
 
     public SpawnFadeRenderer(double spawnChance, int fadeFrames, double maxBrightness)
     {
+        if (fadeFrames <= 0)
+            throw new ArgumentOutOfRangeException(nameof(fadeFrames), "Fade frames must be positive.");
+        
         _spawnChance = spawnChance;
         _fadeFrames = fadeFrames;
         _maxBrightness = maxBrightness;

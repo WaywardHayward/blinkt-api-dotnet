@@ -16,6 +16,9 @@ public class AviationBeaconRenderer : AnimationRendererBase
 
     public AviationBeaconRenderer(string pattern, double brightness, double cycleGap)
     {
+        if (cycleGap < 0)
+            throw new ArgumentOutOfRangeException(nameof(cycleGap), "Cycle gap cannot be negative.");
+        
         _pattern = pattern;
         _brightness = brightness;
         _cycleGap = cycleGap;

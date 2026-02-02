@@ -31,7 +31,8 @@ public class ColorCycleRenderer : AnimationRendererBase
         
         for (int i = 0; i < PixelCount; i++)
         {
-            var hue = rotation + i * _spacing;
+            var hue = (rotation + i * _spacing) % 360;
+            if (hue < 0) hue += 360;
             var rgb = HsvToRgb(hue, 1.0, 1.0);
             
             controller.SetPixel(i, rgb.R, rgb.G, rgb.B, _brightness);

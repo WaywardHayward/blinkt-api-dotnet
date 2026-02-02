@@ -31,15 +31,18 @@ public class BouncingDotRenderer : AnimationRendererBase
         var position = (elapsedSeconds * 10) % cycleLength; // Speed multiplier of 10
         
         int headPosition;
+        int direction;
         if (position < PixelCount - 1)
         {
             // Moving forward (0 -> 7)
             headPosition = (int)position;
+            direction = -1; // Trail behind means lower indices
         }
         else
         {
             // Moving backward (7 -> 0)
             headPosition = (PixelCount - 1) - (int)(position - (PixelCount - 1));
+            direction = 1; // Trail behind means higher indices
         }
 
         controller.Clear();
@@ -47,7 +50,7 @@ public class BouncingDotRenderer : AnimationRendererBase
         // Draw head and trail
         for (int i = 0; i < _trailLength && i < _brightness.Length; i++)
         {
-            var pixelPos = headPosition - i;
+            var pixelPos = headPosition + (direction * i);
             if (pixelPos >= 0 && pixelPos < PixelCount)
             {
                 controller.SetPixel(pixelPos, color.R, color.G, color.B, _brightness[i]);

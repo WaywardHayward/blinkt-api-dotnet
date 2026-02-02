@@ -14,7 +14,7 @@ public class MatrixRainRenderer : AnimationRendererBase
     private readonly int _fallSpeed;
     private readonly int _trailLength;
     private readonly double _maxBrightness;
-    private readonly List<double> _drops = new(); // positions of falling drops
+    private readonly List<double> _drops = new(); // spawn times of falling drops
 
     public MatrixRainRenderer(double spawnChance, int fallSpeed, int trailLength, double maxBrightness)
     {
@@ -32,20 +32,21 @@ public class MatrixRainRenderer : AnimationRendererBase
         // Spawn new drops
         if (Random.NextDouble() < _spawnChance)
         {
-            _drops.Add(0);
+            _drops.Add(elapsedSeconds); // store spawn time
         }
 
         controller.Clear();
 
         // Update and render drops
         var toRemove = new List<double>();
-        foreach (var position in _drops.ToList())
+        foreach (var spawnTime in _drops.ToList())
         {
-            var currentPos = position + (elapsedSeconds * _fallSpeed);
+            var age = elapsedSeconds - spawnTime;
+            var currentPos = age * _fallSpeed;
             
             if (currentPos >= PixelCount + _trailLength)
             {
-                toRemove.Add(position);
+                toRemove.Add(spawnTime);
                 continue;
             }
 
@@ -61,9 +62,9 @@ public class MatrixRainRenderer : AnimationRendererBase
             }
         }
 
-        foreach (var pos in toRemove)
+        foreach (var spawnTime in toRemove)
         {
-            _drops.Remove(pos);
+            _drops.Remove(spawnTime);
         }
 
         controller.Show();

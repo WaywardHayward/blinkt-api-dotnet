@@ -19,6 +19,9 @@ public class OrganicWaveRenderer : AnimationRendererBase
 
     public OrganicWaveRenderer(double baseSpeed, double speedVariation, int width, double maxBrightness)
     {
+        if (maxBrightness < 0 || maxBrightness > 1)
+            throw new ArgumentOutOfRangeException(nameof(maxBrightness), "Max brightness must be between 0.0 and 1.0.");
+        
         _baseSpeed = baseSpeed;
         _speedVariation = speedVariation;
         _width = width;

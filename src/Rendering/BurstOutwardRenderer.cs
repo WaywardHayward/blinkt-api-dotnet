@@ -16,6 +16,11 @@ public class BurstOutwardRenderer : AnimationRendererBase
 
     public BurstOutwardRenderer(double burstSpeed, double fadeSpeed, double maxBrightness)
     {
+        if (maxBrightness < 0 || maxBrightness > 1)
+            throw new ArgumentOutOfRangeException(nameof(maxBrightness), "Max brightness must be between 0.0 and 1.0.");
+        if (fadeSpeed < 0)
+            throw new ArgumentOutOfRangeException(nameof(fadeSpeed), "Fade speed must be non-negative.");
+        
         _burstSpeed = burstSpeed;
         _fadeSpeed = fadeSpeed;
         _maxBrightness = maxBrightness;

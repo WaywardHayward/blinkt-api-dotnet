@@ -16,6 +16,8 @@ public class ProgressBarRenderer : AnimationRendererBase
 
     public ProgressBarRenderer(double brightness, bool smooth)
     {
+        if (brightness < 0 || brightness > 1)
+            throw new ArgumentOutOfRangeException(nameof(brightness), "Brightness must be between 0.0 and 1.0");
         _brightness = brightness;
         _smooth = smooth;
     }
