@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class TypingIndicatorRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "typing_indicator";
     private readonly double _bounceSpeed;
     private readonly int _dotSpacing;
     private readonly double _brightness;
@@ -18,6 +20,10 @@ public class TypingIndicatorRenderer : AnimationRendererBase
         _dotSpacing = dotSpacing;
         _brightness = brightness;
     }
+
+    public static TypingIndicatorRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("bounce_speed"), json.GetInt("dot_spacing"), json.GetDouble("brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

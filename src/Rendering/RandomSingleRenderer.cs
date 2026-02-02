@@ -17,6 +17,9 @@ public class RandomSingleRenderer : AnimationRendererBase
         _brightness = brightness;
     }
 
+    public static RandomSingleRenderer Create(JsonElement json) =>
+        new(json.GetDouble("brightness"));
+
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         ClearRenderShow(controller, c =>

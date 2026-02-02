@@ -16,6 +16,10 @@ public class SparkleRenderer : AnimationRendererBase
         _sparsity = sparsity;
     }
 
+    public static SparkleRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("brightness"), json.GetDouble("sparsity"));
+
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         for (int i = 0; i < 8; i++)

@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class OrganicWaveRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "organic_wave";
     private readonly double _baseSpeed;
     private readonly double _speedVariation;
     private readonly int _width;
@@ -23,6 +25,10 @@ public class OrganicWaveRenderer : AnimationRendererBase
         _maxBrightness = maxBrightness;
         _currentSpeed = baseSpeed;
     }
+
+    public static OrganicWaveRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("base_speed"), json.GetDouble("speed_variation"), json.GetInt("width"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {

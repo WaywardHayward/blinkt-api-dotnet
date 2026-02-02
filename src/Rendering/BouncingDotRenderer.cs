@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class BouncingDotRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "bouncing_dot";
     private readonly int _trailLength;
     private readonly double[] _brightness;
 
@@ -15,6 +17,11 @@ public class BouncingDotRenderer : AnimationRendererBase
     {
         _trailLength = trailLength;
         _brightness = brightness;
+    }
+
+    public static BouncingDotRenderer Create(JsonElement json)
+    {
+        return new(json.GetInt("trail_length"), json.GetDoubleArray("brightness"));
     }
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)

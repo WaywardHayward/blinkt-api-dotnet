@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class TravelingWaveRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "traveling_wave";
     private readonly double _speed;
     private readonly int _width;
     private readonly double _maxBrightness;
@@ -15,6 +17,10 @@ public class TravelingWaveRenderer : AnimationRendererBase
         _width = width;
         _maxBrightness = maxBrightness;
     }
+
+    public static TravelingWaveRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("speed"), json.GetInt("width"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {

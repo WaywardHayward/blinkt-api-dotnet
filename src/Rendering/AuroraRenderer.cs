@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class AuroraRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "aurora";
     private readonly double _speed;
     private readonly double _brightnessVariation;
     private readonly double _maxBrightness;
@@ -18,6 +20,10 @@ public class AuroraRenderer : AnimationRendererBase
         _brightnessVariation = brightnessVariation;
         _maxBrightness = maxBrightness;
     }
+
+    public static AuroraRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("speed"), json.GetDouble("brightness_variation"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

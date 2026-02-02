@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class CenterPulseRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "center_pulse";
     private readonly double _pulseSpeed;
     private readonly double _maxBrightness;
     private readonly double _beatInterval;
@@ -22,6 +24,10 @@ public class CenterPulseRenderer : AnimationRendererBase
         _maxBrightness = maxBrightness;
         _beatInterval = beatInterval;
     }
+
+    public static CenterPulseRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("pulse_speed"), json.GetDouble("max_brightness"), json.GetDouble("beat_interval"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

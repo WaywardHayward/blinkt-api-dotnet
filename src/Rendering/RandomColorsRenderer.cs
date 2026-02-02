@@ -22,6 +22,9 @@ public class RandomColorsRenderer : AnimationRendererBase
         InitializeRandomColors();
     }
 
+    public static RandomColorsRenderer Create(JsonElement json) =>
+        new(json.GetDouble("change_rate"), json.GetDouble("brightness"));
+
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         if (ShouldChangeColors(elapsedSeconds))

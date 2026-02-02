@@ -20,6 +20,9 @@ public class ProgressBarRenderer : AnimationRendererBase
         _smooth = smooth;
     }
 
+    public static ProgressBarRenderer Create(JsonElement json) =>
+        new(json.GetDouble("brightness"), json.GetBool("smooth"));
+
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Demo mode: animate 0-100% over 10 seconds

@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class BurstOutwardRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "burst_outward";
     private readonly double _burstSpeed;
     private readonly double _fadeSpeed;
     private readonly double _maxBrightness;
@@ -18,6 +20,10 @@ public class BurstOutwardRenderer : AnimationRendererBase
         _fadeSpeed = fadeSpeed;
         _maxBrightness = maxBrightness;
     }
+
+    public static BurstOutwardRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("burst_speed"), json.GetDouble("fade_speed"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

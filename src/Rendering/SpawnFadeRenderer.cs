@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class SpawnFadeRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "spawn_fade";
     private readonly double _spawnChance;
     private readonly int _fadeFrames;
     private readonly double _maxBrightness;
@@ -19,6 +21,10 @@ public class SpawnFadeRenderer : AnimationRendererBase
         _fadeFrames = fadeFrames;
         _maxBrightness = maxBrightness;
     }
+
+    public static SpawnFadeRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("spawn_chance"), json.GetInt("fade_frames"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

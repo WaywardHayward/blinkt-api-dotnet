@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class MatrixRainRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "matrix_rain";
     private readonly double _spawnChance;
     private readonly int _fallSpeed;
     private readonly int _trailLength;
@@ -21,6 +23,9 @@ public class MatrixRainRenderer : AnimationRendererBase
         _trailLength = trailLength;
         _maxBrightness = maxBrightness;
     }
+
+    public static MatrixRainRenderer Create(JsonElement json) =>
+        new(json.GetDouble("spawn_chance"), json.GetInt("fall_speed"), json.GetInt("trail_length"), json.GetDouble("max_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

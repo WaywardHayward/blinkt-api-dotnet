@@ -23,6 +23,9 @@ public class CometTrailRenderer : AnimationRendererBase
         _fadeRate = fadeRate;
     }
 
+    public static CometTrailRenderer Create(JsonElement json) =>
+        new(json.GetDouble("speed"), json.GetInt("trail_length"), json.GetDouble("head_brightness"), json.GetDouble("fade_rate"));
+
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         var position = (elapsedSeconds * _speed) % PixelCount;

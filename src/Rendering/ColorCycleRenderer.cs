@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class ColorCycleRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "color_cycle";
     private readonly double _rotationSpeed;
     private readonly double _brightness;
     private readonly double _spacing;
@@ -18,6 +20,10 @@ public class ColorCycleRenderer : AnimationRendererBase
         _brightness = brightness;
         _spacing = spacing;
     }
+
+    public static ColorCycleRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("rotation_speed"), json.GetDouble("brightness"), json.GetDouble("spacing"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

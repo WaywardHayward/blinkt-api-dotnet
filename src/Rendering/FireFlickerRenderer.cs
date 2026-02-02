@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class FireFlickerRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "fire_flicker";
     private readonly double _baseBrightness;
     private readonly double _flickerAmount;
     private readonly double _colorVariation;
@@ -18,6 +20,10 @@ public class FireFlickerRenderer : AnimationRendererBase
         _flickerAmount = flickerAmount;
         _colorVariation = colorVariation;
     }
+
+    public static FireFlickerRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("base_brightness"), json.GetDouble("flicker_amount"), json.GetDouble("color_variation"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

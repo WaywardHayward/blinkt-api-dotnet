@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class OrganicFireRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "organic_fire";
     private readonly double _baseBrightness;
     private readonly double _flickerAmount;
     private readonly double _emberChance;
@@ -20,6 +22,10 @@ public class OrganicFireRenderer : AnimationRendererBase
         _emberChance = emberChance;
         _emberBrightness = emberBrightness;
     }
+
+    public static OrganicFireRenderer Create(JsonElement json)
+ =>
+        new(json.GetDouble("base_brightness"), json.GetDouble("flicker_amount"), json.GetDouble("ember_chance"), json.GetDouble("ember_brightness"));
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
     {

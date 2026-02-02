@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class PixelOscillatorRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "pixel_oscillator";
     private readonly double _minBrightness;
     private readonly double _maxBrightness;
     private readonly double _minSpeed;
@@ -26,6 +28,13 @@ public class PixelOscillatorRenderer : AnimationRendererBase
             _phases[i] = Random.NextDouble() * 2 * Math.PI;
             _speeds[i] = _minSpeed + Random.NextDouble() * (_maxSpeed - _minSpeed);
         }
+    }
+
+    public static PixelOscillatorRenderer Create(JsonElement json)
+    {
+        var (minBrightness, maxBrightness) = json.GetRange("brightness_range");
+        var (minSpeed, maxSpeed) = json.GetRange("speed_range");
+        return new(minBrightness, maxBrightness, minSpeed, maxSpeed);
     }
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)

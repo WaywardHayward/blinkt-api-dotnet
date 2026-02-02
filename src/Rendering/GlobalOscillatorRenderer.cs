@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
 public class GlobalOscillatorRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "global_oscillator";
     private readonly double _periodSeconds;
     private readonly double _minBrightness;
     private readonly double _maxBrightness;
@@ -16,6 +18,12 @@ public class GlobalOscillatorRenderer : AnimationRendererBase
         _minBrightness = minBrightness;
         _maxBrightness = maxBrightness;
         _oscillator = oscillator;
+    }
+
+    public static GlobalOscillatorRenderer Create(JsonElement json)
+    {
+        var (minBrightness, maxBrightness) = json.GetRange("brightness_range");
+        return new(json.GetDouble("period_seconds"), minBrightness, maxBrightness, json.GetString("oscillator", "sine"));
     }
 
     public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)

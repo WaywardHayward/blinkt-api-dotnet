@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
@@ -8,6 +9,7 @@ namespace BlinktApi.Rendering;
 /// </summary>
 public class AviationBeaconRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "aviation_beacon";
     private readonly string _pattern;
     private readonly double _brightness;
     private readonly double _cycleGap;
@@ -17,6 +19,11 @@ public class AviationBeaconRenderer : AnimationRendererBase
         _pattern = pattern;
         _brightness = brightness;
         _cycleGap = cycleGap;
+    }
+
+    public static AviationBeaconRenderer Create(JsonElement json)
+    {
+        return new(json.GetString("pattern", "code1"), json.GetDouble("brightness"), json.GetDouble("cycle_gap"));
     }
 
     public override void Render(BlinktController controller, Color color, double elapsedSeconds)
