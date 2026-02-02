@@ -15,6 +15,10 @@ public class CenterPulseRenderer : IAnimationRenderer
 
     public CenterPulseRenderer(double pulseSpeed, double maxBrightness, double beatInterval)
     {
+        if (beatInterval <= 0)
+            throw new ArgumentOutOfRangeException(nameof(beatInterval), 
+                "Beat interval must be positive to avoid division by zero in heartbeat timing.");
+        
         _pulseSpeed = pulseSpeed;
         _maxBrightness = maxBrightness;
         _beatInterval = beatInterval;
@@ -41,7 +45,7 @@ public class CenterPulseRenderer : IAnimationRenderer
         }
 
         // Apply to all pixels with falloff from center
-        var center = PixelCount / 2.0;
+        var center = (PixelCount - 1) / 2.0;
         for (int i = 0; i < PixelCount; i++)
         {
             var distanceFromCenter = Math.Abs(i - center) / center;

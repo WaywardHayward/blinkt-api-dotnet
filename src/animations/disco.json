@@ -1,0 +1,12 @@
+{
+  "name": "disco",
+  "description": "🪩 Rapid random color changes - party mode!",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "random_colors",
+  "parameters": {
+    "fps": 30,
+    "change_rate": 0.3,
+    "brightness": 0.08
+  }
+}

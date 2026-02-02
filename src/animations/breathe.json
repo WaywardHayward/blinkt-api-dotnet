@@ -1,0 +1,13 @@
+{
+  "name": "breathe",
+  "description": "🧘 Slow, gentle breathing pulse - calm and meditative",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "global_oscillator",
+  "parameters": {
+    "fps": 30,
+    "period_seconds": 4.0,
+    "brightness_range": [0.01, 0.06],
+    "oscillator": "sine"
+  }
+}

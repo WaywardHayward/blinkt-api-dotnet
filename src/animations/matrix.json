@@ -1,0 +1,14 @@
+{
+  "name": "matrix",
+  "description": "💚 Falling green pixels like The Matrix",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "matrix_rain",
+  "parameters": {
+    "fps": 30,
+    "spawn_chance": 0.15,
+    "fall_speed": 2,
+    "trail_length": 4,
+    "max_brightness": 0.1
+  }
+}

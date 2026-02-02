@@ -23,7 +23,8 @@ public class BurstOutwardRenderer : IAnimationRenderer
     public void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
         // Wave expands from center outward
-        var center = PixelCount / 2.0;
+        // For even pixel count, center between the two middle LEDs for symmetry
+        var center = (PixelCount - 1) / 2.0;
         var wavePosition = elapsedSeconds * _burstSpeed * PixelCount;
         
         for (int i = 0; i < PixelCount; i++)

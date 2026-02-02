@@ -1,0 +1,14 @@
+{
+  "name": "campfire",
+  "description": "🔥 Organic campfire with random ember pops",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "organic_fire",
+  "parameters": {
+    "fps": 60,
+    "base_brightness": 0.04,
+    "flicker_amount": 0.06,
+    "ember_chance": 0.02,
+    "ember_brightness": 0.12
+  }
+}

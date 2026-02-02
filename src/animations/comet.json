@@ -1,0 +1,14 @@
+{
+  "name": "comet",
+  "description": "☄️ Bright pixel with long fading tail",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "comet_trail",
+  "parameters": {
+    "fps": 60,
+    "speed": 2.5,
+    "trail_length": 6,
+    "head_brightness": 0.15,
+    "fade_rate": 0.7
+  }
+}

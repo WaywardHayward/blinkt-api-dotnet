@@ -4,38 +4,54 @@ using BlinktApi.Hardware;
 namespace BlinktApi.Rendering;
 
 /// <summary>
-/// Rainbow color cycle across pixels
+/// Random rapid color changes - disco party mode
 /// </summary>
-public class ColorCycleRenderer : IAnimationRenderer
+public class RandomColorsRenderer : IAnimationRenderer
 {
-    private readonly double _rotationSpeed;
+    private readonly double _changeRate;
     private readonly double _brightness;
-    private readonly double _spacing;
+    private readonly Random _random = new();
+    private double _lastChangeTime;
+    private Color[] _currentColors = new Color[8];
     private const int PixelCount = 8;
 
-    public ColorCycleRenderer(double rotationSpeed, double brightness, double spacing)
+    public RandomColorsRenderer(double changeRate, double brightness)
     {
-        _rotationSpeed = rotationSpeed;
+        _changeRate = changeRate;
         _brightness = brightness;
-        _spacing = spacing;
+        
+        // Initialize with random colors
+        for (int i = 0; i < PixelCount; i++)
+        {
+            _currentColors[i] = GetRandomColor();
+        }
     }
 
     public void Render(BlinktController controller, Color color, double elapsedSeconds)
     {
-        var rotation = elapsedSeconds * _rotationSpeed * 360;
-        
+        // Change colors at specified rate
+        if (elapsedSeconds - _lastChangeTime > _changeRate)
+        {
+            for (int i = 0; i < PixelCount; i++)
+            {
+                _currentColors[i] = GetRandomColor();
+            }
+            _lastChangeTime = elapsedSeconds;
+        }
+
         for (int i = 0; i < PixelCount; i++)
         {
-            // Calculate hue for this pixel and normalize to [0, 360)
-            var hue = (rotation + i * _spacing) % 360;
-            if (hue < 0) hue += 360; // Handle negative values from modulo
-            
-            var rgb = HsvToRgb(hue, 1.0, 1.0);
-            
-            controller.SetPixel(i, rgb.R, rgb.G, rgb.B, _brightness);
+            var c = _currentColors[i];
+            controller.SetPixel(i, c.R, c.G, c.B, _brightness);
         }
 
         controller.Show();
+    }
+
+    private Color GetRandomColor()
+    {
+        var hue = _random.NextDouble() * 360;
+        return HsvToRgb(hue, 1.0, 1.0);
     }
 
     private static Color HsvToRgb(double h, double s, double v)
