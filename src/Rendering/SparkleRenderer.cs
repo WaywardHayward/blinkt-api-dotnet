@@ -30,6 +30,7 @@ public class SparkleRenderer : AnimationRendererBase
     private void RenderPixel(BlinktController ctrl, int i)
     {
         var brightness = Random.NextDouble() < _sparsity ? _brightness : 0.0;
-        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
+        // Use RGB scaling for smooth brightness (on/off but consistent with other renderers)
+        SetPixelSmooth(ctrl, i, _currentColor, brightness);
     }
 }

@@ -38,7 +38,9 @@ public class GlobalOscillatorRenderer : AnimationRendererBase
         };
         
         brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
-        blinkt.SetAll(color.R, color.G, color.B, brightness);
+        
+        // Use RGB scaling for smooth brightness transitions
+        SetAllSmooth(blinkt, color, brightness);
         blinkt.Show();
     }
 

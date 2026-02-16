@@ -112,10 +112,11 @@ public class AviationBeaconRenderer : AnimationRendererBase
         var position = (time * 3) % PixelCount; // 3 rotations per second
         var pixel = (int)position;
         
-        controller.SetPixel(pixel, color.R, color.G, color.B, _brightness);
+        // Use RGB scaling for smooth brightness
+        SetPixelSmooth(controller, pixel, color, _brightness);
         
         var prevPixel = (pixel - 1 + PixelCount) % PixelCount;
-        controller.SetPixel(prevPixel, color.R, color.G, color.B, _brightness * 0.3);
+        SetPixelSmooth(controller, prevPixel, color, _brightness * 0.3);
     }
 
     private bool IsFlashActive(double time, double start, double end) => 

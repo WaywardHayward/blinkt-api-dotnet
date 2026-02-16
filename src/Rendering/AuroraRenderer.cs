@@ -46,7 +46,9 @@ public class AuroraRenderer : AnimationRendererBase
             var g = (byte)Math.Clamp(color.G * 1.2, 0, 255);
             var b = (byte)Math.Clamp(color.B * 0.9, 0, 255);
 
-            controller.SetPixel(i, r, g, b, brightness);
+            // Use RGB scaling for smooth brightness transitions
+            var auroraColor = Color.FromArgb(r, g, b);
+            SetPixelSmooth(controller, i, auroraColor, brightness);
         }
 
         controller.Show();

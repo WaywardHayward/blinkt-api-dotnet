@@ -60,7 +60,8 @@ public class ProgressBarRenderer : AnimationRendererBase
                 }
             }
 
-            controller.SetPixel(i, color.R, color.G, color.B, brightness);
+            // Use RGB scaling for smooth brightness transitions on the edge pixel
+            SetPixelSmooth(controller, i, color, brightness);
         }
 
         controller.Show();

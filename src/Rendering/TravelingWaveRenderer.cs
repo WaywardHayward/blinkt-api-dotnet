@@ -42,7 +42,8 @@ public class TravelingWaveRenderer : AnimationRendererBase
         var brightness = distance < _width
             ? _maxBrightness * (1.0 - distance / _width)
             : 0.0;
-            
-        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
+        
+        // Use RGB scaling for smooth brightness transitions
+        SetPixelSmooth(ctrl, i, _currentColor, brightness);
     }
 }

@@ -57,6 +57,8 @@ public class PixelOscillatorRenderer : AnimationRendererBase
         _phases[i] += _speeds[i];
         var brightness = (Math.Sin(_phases[i]) + 1) / 2;
         brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
-        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
+        
+        // Use RGB scaling for smooth brightness transitions
+        SetPixelSmooth(ctrl, i, _currentColor, brightness);
     }
 }

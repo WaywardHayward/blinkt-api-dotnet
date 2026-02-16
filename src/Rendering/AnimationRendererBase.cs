@@ -101,6 +101,35 @@ public abstract class AnimationRendererBase : IAnimationRenderer
     {
         ForEachPixel(i => controller.SetPixel(i, color.R, color.G, color.B, brightness));
     }
+
+    /// <summary>
+    /// Set a pixel with smooth brightness by scaling RGB values instead of using hardware brightness.
+    /// This provides 256 levels of brightness instead of the APA102's 5-bit (32 levels),
+    /// eliminating visible stepping/flickering in brightness transitions.
+    /// </summary>
+    /// <param name="controller">The Blinkt controller</param>
+    /// <param name="index">Pixel index (0-7)</param>
+    /// <param name="color">Base color</param>
+    /// <param name="brightness">Brightness 0.0-1.0</param>
+    /// <param name="hardwareBrightness">Hardware brightness to use (default 1.0)</param>
+    protected static void SetPixelSmooth(BlinktController controller, int index, Color color, double brightness, double hardwareBrightness = 1.0)
+    {
+        var r = (byte)Math.Clamp(color.R * brightness, 0, 255);
+        var g = (byte)Math.Clamp(color.G * brightness, 0, 255);
+        var b = (byte)Math.Clamp(color.B * brightness, 0, 255);
+        controller.SetPixel(index, r, g, b, hardwareBrightness);
+    }
+
+    /// <summary>
+    /// Set all pixels with smooth brightness by scaling RGB values.
+    /// </summary>
+    protected static void SetAllSmooth(BlinktController controller, Color color, double brightness, double hardwareBrightness = 1.0)
+    {
+        var r = (byte)Math.Clamp(color.R * brightness, 0, 255);
+        var g = (byte)Math.Clamp(color.G * brightness, 0, 255);
+        var b = (byte)Math.Clamp(color.B * brightness, 0, 255);
+        controller.SetAll(r, g, b, hardwareBrightness);
+    }
 }
 
 /// <summary>

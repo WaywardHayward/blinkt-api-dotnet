@@ -63,7 +63,8 @@ public class SpawnFadeRenderer : AnimationRendererBase
                 continue;
 
             var brightness = CalculateFadedBrightness(age);
-            controller.SetPixel(pixel, color.R, color.G, color.B, brightness);
+            // Use RGB scaling for smooth brightness transitions (no hardware PWM stepping)
+            SetPixelSmooth(controller, pixel, color, brightness);
             _activePixels[pixel] = age + 1;
         }
     }

@@ -56,7 +56,8 @@ public class CenterPulseRenderer : AnimationRendererBase
             var distanceFromCenter = Math.Abs(i - center) / center;
             var brightness = pulseIntensity * (1.0 - distanceFromCenter * 0.5);
             
-            controller.SetPixel(i, color.R, color.G, color.B, Math.Max(0, brightness));
+            // Use RGB scaling for smooth brightness transitions
+            SetPixelSmooth(controller, i, color, Math.Max(0, brightness));
         }
 
         controller.Show();

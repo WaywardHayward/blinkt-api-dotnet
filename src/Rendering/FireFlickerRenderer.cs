@@ -40,7 +40,9 @@ public class FireFlickerRenderer : AnimationRendererBase
             var g = (byte)Math.Clamp(color.G + (int)(colorShift * 30), 0, 255);
             var b = (byte)Math.Clamp(color.B - (int)(colorShift * 20), 0, 255);
 
-            controller.SetPixel(i, r, g, b, brightness);
+            // Use RGB scaling for smooth brightness (avoid hardware PWM stepping)
+            var flickerColor = Color.FromArgb(r, g, b);
+            SetPixelSmooth(controller, i, flickerColor, brightness);
         }
 
         controller.Show();

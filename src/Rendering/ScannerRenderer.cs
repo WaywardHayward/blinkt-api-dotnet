@@ -38,6 +38,7 @@ public class ScannerRenderer : AnimationRendererBase
         var brightness = distance < 1.5
             ? _maxBrightness * (1.0 - distance / 1.5)
             : 0.0;
-        ctrl.SetPixel(i, _currentColor.R, _currentColor.G, _currentColor.B, brightness);
+        // Use RGB scaling for smooth brightness transitions
+        SetPixelSmooth(ctrl, i, _currentColor, brightness);
     }
 }

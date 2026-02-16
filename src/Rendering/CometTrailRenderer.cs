@@ -39,16 +39,16 @@ public class CometTrailRenderer : AnimationRendererBase
 
         controller.Clear();
 
-        // Draw head
-        controller.SetPixel(headPixel, color.R, color.G, color.B, _headBrightness);
+        // Draw head - use RGB scaling for smooth brightness
+        SetPixelSmooth(controller, headPixel, color, _headBrightness);
 
-        // Draw trail
+        // Draw trail - use RGB scaling for smooth fading
         for (int i = 1; i < _trailLength; i++)
         {
             var trailPixel = (headPixel - i + PixelCount) % PixelCount;
             var brightness = _headBrightness * Math.Pow(_fadeRate, i);
             
-            controller.SetPixel(trailPixel, color.R, color.G, color.B, brightness);
+            SetPixelSmooth(controller, trailPixel, color, brightness);
         }
 
         controller.Show();

@@ -38,7 +38,9 @@ public class OrganicFireRenderer : AnimationRendererBase
     {
         var brightness = CalculatePixelBrightness();
         var (r, g, b) = CalculateColorWithWarmth(_currentColor);
-        ctrl.SetPixel(i, r, g, b, brightness);
+        // Use RGB scaling for smooth brightness transitions
+        var fireColor = Color.FromArgb(r, g, b);
+        SetPixelSmooth(ctrl, i, fireColor, brightness);
     }
 
     private double CalculatePixelBrightness()

@@ -45,7 +45,8 @@ public class BurstOutwardRenderer : AnimationRendererBase
             // Brightness peaks at wave position and fades with distance
             var brightness = Math.Max(0, _maxBrightness * (1.0 - distanceFromWave * _fadeSpeed));
             
-            controller.SetPixel(i, color.R, color.G, color.B, brightness);
+            // Use RGB scaling for smooth brightness transitions
+            SetPixelSmooth(controller, i, color, brightness);
         }
 
         controller.Show();

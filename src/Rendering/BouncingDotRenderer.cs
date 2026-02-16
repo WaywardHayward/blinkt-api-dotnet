@@ -47,13 +47,13 @@ public class BouncingDotRenderer : AnimationRendererBase
 
         controller.Clear();
 
-        // Draw head and trail
+        // Draw head and trail - use RGB scaling for smooth brightness
         for (int i = 0; i < _trailLength && i < _brightness.Length; i++)
         {
             var pixelPos = headPosition + (direction * i);
             if (pixelPos >= 0 && pixelPos < PixelCount)
             {
-                controller.SetPixel(pixelPos, color.R, color.G, color.B, _brightness[i]);
+                SetPixelSmooth(controller, pixelPos, color, _brightness[i]);
             }
         }
 

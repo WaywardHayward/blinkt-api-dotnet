@@ -54,8 +54,9 @@ public class OrganicWaveRenderer : AnimationRendererBase
             var brightness = distance < _width
                 ? _maxBrightness * (1.0 - distance / _width)
                 : 0.0;
-                
-            blinkt.SetPixel(i, color.R, color.G, color.B, brightness);
+            
+            // Use RGB scaling for smooth brightness transitions
+            SetPixelSmooth(blinkt, i, color, brightness);
         }
         blinkt.Show();
     }
