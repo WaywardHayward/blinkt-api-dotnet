@@ -39,6 +39,8 @@ builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Re
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.AuroraFactory>();
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.TypingIndicatorFactory>();
 builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.MatrixRainFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.BreatheFactory>();
+builder.Services.AddSingleton<BlinktApi.Rendering.IRendererFactory, BlinktApi.Rendering.SpectrumFactory>();
 
 // Register the main factory
 builder.Services.AddSingleton<BlinktApi.Rendering.RendererFactory>();

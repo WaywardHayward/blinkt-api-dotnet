@@ -1,0 +1,13 @@
+{
+  "name": "spectrum",
+  "description": "🌈 Slow peaceful drift through the full color spectrum",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "spectrum",
+  "parameters": {
+    "fps": 30,
+    "cycle_duration_seconds": 45.0,
+    "brightness": 0.5,
+    "saturation": 1.0
+  }
+}

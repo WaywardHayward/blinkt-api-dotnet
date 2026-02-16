@@ -1,13 +1,14 @@
 {
   "name": "breathe",
-  "description": "🧘 Slow, gentle breathing pulse - calm and meditative",
+  "description": "💜 Meditation breathing - soft magenta pulse with gentle sine wave",
   "author": "Rabbie Pi",
-  "version": "1.0",
-  "type": "global_oscillator",
+  "version": "2.0",
+  "type": "breathe",
   "parameters": {
     "fps": 30,
-    "period_seconds": 4.0,
-    "brightness_range": [0.01, 0.06],
-    "oscillator": "sine"
+    "period_seconds": 5.0,
+    "min_brightness": 0.3,
+    "max_brightness": 1.0,
+    "color": "#FF00FF"
   }
 }

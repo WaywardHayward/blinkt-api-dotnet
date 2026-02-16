@@ -154,3 +154,15 @@ public class MatrixRainFactory : RendererFactoryBase<MatrixRainRenderer>
     public override string TypeKey => "matrix_rain";
     protected override MatrixRainRenderer CreateTyped(JsonElement json) => MatrixRainRenderer.Create(json);
 }
+
+public class BreatheFactory : RendererFactoryBase<BreatheRenderer>
+{
+    public override string TypeKey => "breathe";
+    protected override BreatheRenderer CreateTyped(JsonElement json) => BreatheRenderer.Create(json);
+}
+
+public class SpectrumFactory : RendererFactoryBase<SpectrumRenderer>
+{
+    public override string TypeKey => "spectrum";
+    protected override SpectrumRenderer CreateTyped(JsonElement json) => SpectrumRenderer.Create(json);
+}
