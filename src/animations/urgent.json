@@ -1,0 +1,13 @@
+{
+  "name": "urgent",
+  "description": "🚨 Rapid red pulse for urgent alerts",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "global_oscillator",
+  "parameters": {
+    "fps": 60,
+    "period_seconds": 0.5,
+    "brightness_range": [0.05, 0.15],
+    "oscillator": "sine"
+  }
+}

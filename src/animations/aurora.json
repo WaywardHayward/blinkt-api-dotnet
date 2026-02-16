@@ -1,0 +1,13 @@
+{
+  "name": "aurora",
+  "description": "🌌 Slow shifting aurora borealis effect",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "aurora",
+  "parameters": {
+    "fps": 30,
+    "speed": 0.05,
+    "brightness_variation": 0.04,
+    "max_brightness": 0.07
+  }
+}

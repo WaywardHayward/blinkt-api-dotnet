@@ -1,0 +1,12 @@
+{
+  "name": "knight-rider",
+  "description": "🚗 Classic KITT scanner with long red trail",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "bouncing_dot",
+  "parameters": {
+    "fps": 60,
+    "trail_length": 4,
+    "brightness": [0.12, 0.08, 0.04, 0.02]
+  }
+}

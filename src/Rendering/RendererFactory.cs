@@ -3,88 +3,22 @@ using BlinktApi.Models;
 
 namespace BlinktApi.Rendering;
 
-public static class RendererFactory
+public class RendererFactory
 {
-    public static IAnimationRenderer? CreateRenderer(Animation animation)
+    private readonly Dictionary<string, IRendererFactory> _factories;
+
+    public RendererFactory(IEnumerable<IRendererFactory> factories)
+    {
+        _factories = factories.ToDictionary(f => f.TypeKey, f => f);
+    }
+
+    public IAnimationRenderer? CreateRenderer(Animation animation)
     {
         if (animation.Parameters == null)
             return null;
 
-        return animation.Type switch
-        {
-            "global_oscillator" => CreateGlobalOscillator(animation.Parameters.Value),
-            "pixel_oscillator" => CreatePixelOscillator(animation.Parameters.Value),
-            "traveling_wave" => CreateTravelingWave(animation.Parameters.Value),
-            "scanner" => CreateScanner(animation.Parameters.Value),
-            "fill" => CreateFill(animation.Parameters.Value),
-            "sparkle" => CreateSparkle(animation.Parameters.Value),
-            "rainbow_cycle" => CreateRainbowCycle(animation.Parameters.Value),
-            _ => null
-        };
-    }
-
-    private static GlobalOscillatorRenderer CreateGlobalOscillator(JsonElement json)
-    {
-        var periodSeconds = json.GetProperty("period_seconds").GetDouble();
-        var brightnessRange = json.GetProperty("brightness_range");
-        var minBrightness = brightnessRange[0].GetDouble();
-        var maxBrightness = brightnessRange[1].GetDouble();
-        var oscillator = json.GetProperty("oscillator").GetString() ?? "sine";
-
-        return new GlobalOscillatorRenderer(periodSeconds, minBrightness, maxBrightness, oscillator);
-    }
-
-    private static PixelOscillatorRenderer CreatePixelOscillator(JsonElement json)
-    {
-        var brightnessRange = json.GetProperty("brightness_range");
-        var minBrightness = brightnessRange[0].GetDouble();
-        var maxBrightness = brightnessRange[1].GetDouble();
-        
-        var speedRange = json.GetProperty("speed_range");
-        var minSpeed = speedRange[0].GetDouble();
-        var maxSpeed = speedRange[1].GetDouble();
-
-        return new PixelOscillatorRenderer(minBrightness, maxBrightness, minSpeed, maxSpeed);
-    }
-
-    private static TravelingWaveRenderer CreateTravelingWave(JsonElement json)
-    {
-        var speed = json.GetProperty("speed").GetDouble();
-        var width = json.GetProperty("width").GetInt32();
-        var maxBrightness = json.GetProperty("max_brightness").GetDouble();
-
-        return new TravelingWaveRenderer(speed, width, maxBrightness);
-    }
-
-    private static ScannerRenderer CreateScanner(JsonElement json)
-    {
-        var speed = json.GetProperty("speed").GetDouble();
-        var maxBrightness = json.GetProperty("max_brightness").GetDouble();
-
-        return new ScannerRenderer(speed, maxBrightness);
-    }
-
-    private static FillRenderer CreateFill(JsonElement json)
-    {
-        var speed = json.GetProperty("speed").GetDouble();
-        var brightness = json.GetProperty("brightness").GetDouble();
-
-        return new FillRenderer(speed, brightness);
-    }
-
-    private static SparkleRenderer CreateSparkle(JsonElement json)
-    {
-        var brightness = json.GetProperty("brightness").GetDouble();
-        var sparsity = json.GetProperty("sparsity").GetDouble();
-
-        return new SparkleRenderer(brightness, sparsity);
-    }
-
-    private static RainbowCycleRenderer CreateRainbowCycle(JsonElement json)
-    {
-        var speed = json.GetProperty("speed").GetDouble();
-        var brightness = json.GetProperty("brightness").GetDouble();
-
-        return new RainbowCycleRenderer(speed, brightness);
+        return _factories.TryGetValue(animation.Type, out var factory)
+            ? factory.Create(animation.Parameters.Value)
+            : null;
     }
 }

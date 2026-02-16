@@ -30,25 +30,8 @@ public class SequenceController : ControllerBase
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public IActionResult Post([FromBody] AnimationRequest request)
     {
-        // Determine color from either string or RGB
-        Color color;
-        string colorDescription;
-        
-        if (request.Rgb != null)
-        {
-            color = ColorHelper.FromRgb(request.Rgb.R, request.Rgb.G, request.Rgb.B);
-            colorDescription = $"rgb({request.Rgb.R},{request.Rgb.G},{request.Rgb.B})";
-            _logger.LogInformation("Starting animation: {Name}, RGB: ({R},{G},{B}), Duration: {Duration}s", 
-                request.Name, request.Rgb.R, request.Rgb.G, request.Rgb.B, request.Duration);
-        }
-        else
-        {
-            var colorString = request.ColorString ?? "blue";
-            color = ColorHelper.Parse(colorString);
-            colorDescription = colorString;
-            _logger.LogInformation("Starting animation: {Name}, Color: {Color}, Duration: {Duration}s", 
-                request.Name, colorString, request.Duration);
-        }
+        var (color, colorDescription) = ParseColor(request);
+        LogAnimationStart(request.Name, colorDescription, request.Duration);
         
         _controller.StartAnimation(request.Name, color, request.Duration);
         
@@ -59,5 +42,35 @@ public class SequenceController : ControllerBase
             color = colorDescription,
             duration = request.Duration
         });
+    }
+
+    private (Color color, string description) ParseColor(AnimationRequest request)
+    {
+        if (request.Rgb != null)
+            return ParseRgbColor(request.Rgb);
+
+        return ParseStringColor(request.ColorString ?? "blue");
+    }
+
+    private (Color color, string description) ParseRgbColor(RgbColor rgb)
+    {
+        var color = ColorHelper.FromRgb(rgb.R, rgb.G, rgb.B);
+        var description = $"rgb({rgb.R},{rgb.G},{rgb.B})";
+        return (color, description);
+    }
+
+    private (Color color, string description) ParseStringColor(string colorString)
+    {
+        var color = ColorHelper.Parse(colorString);
+        return (color, colorString);
+    }
+
+    private void LogAnimationStart(string name, string colorDescription, int duration)
+    {
+        _logger.LogInformation(
+            "Starting animation: {Name}, Color: {Color}, Duration: {Duration}s", 
+            name, 
+            colorDescription, 
+            duration);
     }
 }

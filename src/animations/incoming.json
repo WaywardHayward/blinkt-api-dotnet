@@ -1,0 +1,13 @@
+{
+  "name": "incoming",
+  "description": "📨 Wave sweeping in from left edge",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "traveling_wave",
+  "parameters": {
+    "fps": 60,
+    "speed": 3.0,
+    "width": 3,
+    "max_brightness": 0.1
+  }
+}

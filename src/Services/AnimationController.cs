@@ -16,10 +16,12 @@ public class AnimationController
     private IAnimationRenderer? _currentRenderer;
     private readonly object _lock = new();
     private readonly ILogger<AnimationController> _logger;
+    private readonly RendererFactory _rendererFactory;
 
-    public AnimationController(ILogger<AnimationController> logger)
+    public AnimationController(ILogger<AnimationController> logger, RendererFactory rendererFactory)
     {
         _logger = logger;
+        _rendererFactory = rendererFactory;
     }
 
     public void LoadAnimations(string animationsPath)
@@ -36,30 +38,36 @@ public class AnimationController
         var loadedCount = 0;
         foreach (var file in files)
         {
-            try
-            {
-                var json = File.ReadAllText(file);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var animation = JsonSerializer.Deserialize<Animation>(json, options);
-                
-                if (animation?.Name != null)
-                {
-                    _animations[animation.Name] = animation;
-                    loadedCount++;
-                    _logger.LogDebug("Loaded animation: {Name} from {File}", animation.Name, Path.GetFileName(file));
-                }
-                else
-                {
-                    _logger.LogWarning("Animation file {File} has no name property", Path.GetFileName(file));
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load animation from {File}", Path.GetFileName(file));
-            }
+            if (TryLoadAnimationFile(file))
+                loadedCount++;
         }
         
         _logger.LogInformation("Successfully loaded {LoadedCount}/{TotalCount} animations", loadedCount, files.Length);
+    }
+
+    private bool TryLoadAnimationFile(string file)
+    {
+        try
+        {
+            var json = File.ReadAllText(file);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var animation = JsonSerializer.Deserialize<Animation>(json, options);
+            
+            if (animation?.Name == null)
+            {
+                _logger.LogWarning("Animation file {File} has no name property", Path.GetFileName(file));
+                return false;
+            }
+
+            _animations[animation.Name] = animation;
+            _logger.LogDebug("Loaded animation: {Name} from {File}", animation.Name, Path.GetFileName(file));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load animation from {File}", Path.GetFileName(file));
+            return false;
+        }
     }
 
     public IEnumerable<string> GetAnimationNames() => _animations.Keys.OrderBy(k => k);
@@ -78,104 +86,137 @@ public class AnimationController
                 throw new KeyNotFoundException($"Animation '{name}' not found");
             }
 
-            var renderer = RendererFactory.CreateRenderer(animation);
-            
+            var renderer = _rendererFactory.CreateRenderer(animation);
             if (renderer == null)
             {
                 _logger.LogError("Failed to create renderer for animation: {Name}", name);
                 throw new InvalidOperationException($"Could not create renderer for animation '{name}'");
             }
 
-            // If there's a current animation with finite duration, push to stack
-            if (_currentState != null && _currentState.DurationSeconds > 0)
-            {
-                _stack.Push(_currentState);
-                _logger.LogDebug("Pushed animation {Name} to stack (depth: {Depth})", _currentState.Name, _stack.Count);
-            }
-
-            _currentState = new AnimationState
-            {
-                Name = name,
-                Color = color,
-                StartTime = DateTime.UtcNow,
-                DurationSeconds = durationSeconds
-            };
-            _currentRenderer = renderer;
-            
-            _logger.LogInformation(
-                "Started animation: {Name}, Color: {Color}, Duration: {Duration}s", 
-                name, 
-                $"#{color.R:X2}{color.G:X2}{color.B:X2}", 
-                durationSeconds > 0 ? durationSeconds.ToString() : "infinite");
+            PushCurrentToStackIfFinite();
+            SetCurrentAnimation(name, color, durationSeconds, renderer);
         }
+    }
+
+    private void PushCurrentToStackIfFinite()
+    {
+        if (_currentState == null || _currentState.DurationSeconds <= 0)
+            return;
+
+        _stack.Push(_currentState);
+        _logger.LogDebug("Pushed animation {Name} to stack (depth: {Depth})", _currentState.Name, _stack.Count);
+    }
+
+    private void SetCurrentAnimation(string name, Color color, int durationSeconds, IAnimationRenderer renderer)
+    {
+        _currentState = new AnimationState
+        {
+            Name = name,
+            Color = color,
+            StartTime = DateTime.UtcNow,
+            DurationSeconds = durationSeconds
+        };
+        _currentRenderer = renderer;
+        
+        var durationText = durationSeconds > 0 ? durationSeconds.ToString() : "infinite";
+        _logger.LogInformation(
+            "Started animation: {Name}, Color: {Color}, Duration: {Duration}s", 
+            name, 
+            $"#{color.R:X2}{color.G:X2}{color.B:X2}", 
+            durationText);
     }
 
     public void StopAnimation()
     {
         lock (_lock)
         {
-            if (_stack.Count > 0)
-            {
-                // Pop back to previous animation
-                var previous = _stack.Pop();
-                var animation = GetAnimation(previous.Name);
-                if (animation != null)
-                {
-                    _currentState = previous;
-                    _currentRenderer = RendererFactory.CreateRenderer(animation);
-                    _logger.LogInformation("Popped back to animation: {Name} (stack depth: {Depth})", previous.Name, _stack.Count);
-                }
-            }
-            else
-            {
-                _logger.LogInformation("Stopped animation: {Name}", _currentState?.Name ?? "(none)");
-                _currentState = null;
-                _currentRenderer = null;
-            }
+            if (!TryPopPreviousAnimation())
+                ClearCurrentAnimation();
         }
+    }
+
+    private bool TryPopPreviousAnimation()
+    {
+        if (_stack.Count == 0)
+            return false;
+
+        var previous = _stack.Pop();
+        var animation = GetAnimation(previous.Name);
+        
+        if (animation == null)
+            return false;
+
+        var renderer = _rendererFactory.CreateRenderer(animation);
+        if (renderer == null)
+        {
+            _logger.LogError("Failed to create renderer for animation: {Name}", previous.Name);
+            return false;
+        }
+
+        _currentState = previous;
+        _currentRenderer = renderer;
+        _logger.LogInformation("Popped back to animation: {Name} (stack depth: {Depth})", previous.Name, _stack.Count);
+        return true;
+    }
+
+    private void ClearCurrentAnimation()
+    {
+        _logger.LogInformation("Stopped animation: {Name}", _currentState?.Name ?? "(none)");
+        _currentState = null;
+        _currentRenderer = null;
     }
 
     public void CheckExpiration()
     {
         lock (_lock)
         {
-            if (_currentState?.IsExpired == true)
-            {
-                _logger.LogDebug("Animation {Name} expired after {Duration}s", _currentState.Name, _currentState.DurationSeconds);
-                
-                // Check if there's a queued animation
-                if (_queue.Count > 0)
-                {
-                    var next = _queue.Dequeue();
-                    _logger.LogInformation("Playing next queued animation: {Name} ({QueueRemaining} remaining)", next.Name, _queue.Count);
-                    StartAnimation(next.Name, next.Color, next.DurationSeconds);
-                }
-                else
-                {
-                    StopAnimation();
-                }
-            }
+            if (_currentState?.IsExpired != true)
+                return;
+
+            _logger.LogDebug("Animation {Name} expired after {Duration}s", _currentState.Name, _currentState.DurationSeconds);
+            
+            if (TryPlayNextQueuedAnimation())
+                return;
+
+            StopAnimation();
         }
+    }
+
+    private bool TryPlayNextQueuedAnimation()
+    {
+        if (_queue.Count == 0)
+            return false;
+
+        var next = _queue.Dequeue();
+        _logger.LogInformation("Playing next queued animation: {Name} ({QueueRemaining} remaining)", next.Name, _queue.Count);
+        StartAnimation(next.Name, next.Color, next.DurationSeconds);
+        return true;
     }
     
     public void EnqueueAnimations(IEnumerable<QueuedAnimation> animations)
     {
         lock (_lock)
         {
-            foreach (var anim in animations)
+            var animList = animations.ToList();
+            foreach (var anim in animList)
             {
                 _queue.Enqueue(anim);
             }
-            _logger.LogInformation("Enqueued {Count} animations (total queue: {Total})", animations.Count(), _queue.Count);
             
-            // If nothing is playing, start the first one
-            if (_currentState == null && _queue.Count > 0)
-            {
-                var first = _queue.Dequeue();
-                _logger.LogInformation("Starting first queued animation: {Name}", first.Name);
-                StartAnimation(first.Name, first.Color, first.DurationSeconds);
-            }
+            _logger.LogInformation("Enqueued {Count} animations (total queue: {Total})", animList.Count, _queue.Count);
+            
+            TryStartFirstQueuedAnimation();
         }
+    }
+
+    private void TryStartFirstQueuedAnimation()
+    {
+        if (_currentState != null || _queue.Count == 0)
+            return;
+
+        var first = _queue.Dequeue();
+        _logger.LogInformation("Starting first queued animation: {Name}", first.Name);
+        StartAnimation(first.Name, first.Color, first.DurationSeconds);
     }
     
     public void ClearQueue()

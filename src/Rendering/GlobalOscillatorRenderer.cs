@@ -1,10 +1,12 @@
 using System.Drawing;
+using System.Text.Json;
 using BlinktApi.Hardware;
 
 namespace BlinktApi.Rendering;
 
-public class GlobalOscillatorRenderer : IAnimationRenderer
+public class GlobalOscillatorRenderer : AnimationRendererBase
 {
+    public override string TypeKey => "global_oscillator";
     private readonly double _periodSeconds;
     private readonly double _minBrightness;
     private readonly double _maxBrightness;
@@ -18,7 +20,13 @@ public class GlobalOscillatorRenderer : IAnimationRenderer
         _oscillator = oscillator;
     }
 
-    public void Render(BlinktController blinkt, Color color, double elapsedSeconds)
+    public static GlobalOscillatorRenderer Create(JsonElement json)
+    {
+        var (minBrightness, maxBrightness) = json.GetRange("brightness_range");
+        return new(json.GetDouble("period_seconds"), minBrightness, maxBrightness, json.GetString("oscillator", "sine"));
+    }
+
+    public override void Render(BlinktController blinkt, Color color, double elapsedSeconds)
     {
         var phase = (elapsedSeconds / _periodSeconds) * 2 * Math.PI;
         var brightness = _oscillator switch
@@ -30,7 +38,9 @@ public class GlobalOscillatorRenderer : IAnimationRenderer
         };
         
         brightness = _minBrightness + (brightness * (_maxBrightness - _minBrightness));
-        blinkt.SetAll(color.R, color.G, color.B, brightness);
+        
+        // Use RGB scaling for smooth brightness transitions
+        SetAllSmooth(blinkt, color, brightness);
         blinkt.Show();
     }
 

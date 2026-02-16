@@ -1,0 +1,14 @@
+{
+  "name": "ocean-wave",
+  "description": "🌊 Rolling ocean waves with organic variation",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "organic_wave",
+  "parameters": {
+    "fps": 30,
+    "base_speed": 0.15,
+    "speed_variation": 0.05,
+    "width": 4,
+    "max_brightness": 0.08
+  }
+}

@@ -7,7 +7,7 @@
   "parameters": {
     "fps": 100,
     "period_seconds": 3,
-    "brightness_range": [0.02, 0.08],
+    "brightness_range": [0.02, 0.35],
     "oscillator": "sine"
   }
 }

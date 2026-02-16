@@ -1,0 +1,12 @@
+{
+  "name": "progress-bar",
+  "description": "📊 Fills left to right (accepts progress 0-100)",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "progress_bar",
+  "parameters": {
+    "fps": 30,
+    "brightness": 0.08,
+    "smooth": true
+  }
+}

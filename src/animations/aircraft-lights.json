@@ -1,0 +1,15 @@
+{
+  "name": "aircraft-lights",
+  "description": "✈️ Complete aircraft lighting - red port, green starboard, white strobes, tail beacon",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "aircraft_lighting",
+  "parameters": {
+    "fps": 60,
+    "nav_brightness": 0.08,
+    "strobe_brightness": 0.15,
+    "strobe_interval": 1.5,
+    "beacon_brightness": 0.12,
+    "beacon_interval": 1.0
+  }
+}

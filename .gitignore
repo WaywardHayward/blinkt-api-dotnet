@@ -22,3 +22,8 @@ Thumbs.db
 ## Publishing
 publish/
 *.pubxml
+
+# Build outputs
+publish-arm/
+publish-arm64/
+

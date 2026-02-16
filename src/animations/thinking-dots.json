@@ -1,0 +1,13 @@
+{
+  "name": "thinking-dots",
+  "description": "💭 Three dots bouncing like typing indicator",
+  "author": "Rabbie Pi",
+  "version": "1.0",
+  "type": "typing_indicator",
+  "parameters": {
+    "fps": 30,
+    "bounce_speed": 2.0,
+    "dot_spacing": 2,
+    "brightness": 0.08
+  }
+}

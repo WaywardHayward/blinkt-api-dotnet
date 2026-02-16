@@ -1,0 +1,14 @@
+{
+  "name": "matrix",
+  "description": "💚 Digital rain - iconic Matrix falling code effect",
+  "author": "Rabbie Pi",
+  "version": "2.0",
+  "type": "matrix_rain",
+  "parameters": {
+    "fps": 60,
+    "max_brightness": 0.12,
+    "drop_chance": 0.015,
+    "flash_chance": 0.008,
+    "trail_length": 4
+  }
+}
